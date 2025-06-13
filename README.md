@@ -42,6 +42,7 @@ This repository will help you:
 - 💻 **Sharpen your coding skills** with bite-sized, practical projects
 - 🌱 **Master Git + GitHub workflows** like a professional developer
 - 🤝 **Experience team collaboration** through Pull Requests and code reviews
+- 📚 **Learn command-line fundamentals** through hands-on practice
 
 ---
 
@@ -60,19 +61,24 @@ This repository will help you:
 
 ---
 
-## ⚙️ Lightning-Fast Setup
+## ⚙️ Getting Started with Each Challenge
 
-Setup has been streamlined for you! Each challenge's `starter/` folder includes a custom `setup.js` script that works seamlessly across all platforms:
+Each challenge's `starter/` folder contains its own **README.md** with:
+
+- 📋 **Challenge description** and requirements
+- 🛠️ **Step-by-step setup commands** to get you running
+- 💡 **Command explanations** so you understand what each command does
+- 🎯 **Learning objectives** specific to that challenge
 
 ```bash
 # Navigate to your challenge
-cd starter
+cd frontend/challenge-01/starter
 
-# One command to rule them all ✨
-npm run setup
+# Check the challenge-specific README
+cat README.md
 ```
 
-> 🎉 **That's it!** The script handles package installation and dev server startup automatically.
+> 🎓 **Learning Focus:** You'll master essential development commands while building real projects!
 
 ---
 
@@ -103,6 +109,7 @@ To maintain code quality and learning integrity:
 - ❌ **Never modify** the `solution/` folder
 - ❌ **Never push directly** to `main` — always work on your forked branch
 - ✅ **Always** follow the contribution workflow outlined
+- ✅ **Read each challenge's README** for specific setup instructions
 
 ---
 
@@ -118,6 +125,6 @@ You'll find a beginner-friendly guide that walks you through everything step-by-
 
 **Happy coding, and let's build something amazing together!** 💙
 
-_— Adel | Creator of Web Challenges_
+_[Adel HB](https://github.com/Adel2411) | Creator of Web Challenges_
 
 </div>

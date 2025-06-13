@@ -1,19 +1,16 @@
-# 🏆 {CHALLENGE_TITLE}
+# 🏆 Productivity Pulse Challenge
 
-**Dive into hands-on React development and build something amazing!**
-
-Welcome to this exciting challenge! I've designed this experience to help you apply what you've learned in our workshops through practical coding. Below you'll find everything you need to get started, including streamlined setup instructions and clear submission guidelines.
+**Build your own productivity tracker with sessions, notes, and motivation!**
 
 ---
 
 ## 📖 Challenge Overview
 
-- **Challenge Name:** `{CHALLENGE_NAME}`
+- **Challenge Name:** Productivity Pulse
 - **Track:** `Frontend`
-- **Level:** `{LEVEL}`
-- **Goal:** {GOAL_DESCRIPTION}
-
-> ✨ _Example Goal_: Build a to-do app with filtering, or create an API to manage users.
+- **Level:** `Beginner`
+- **Technologies:** React, HTML, CSS, JavaScript
+- **Goal:** Create a React app that tracks 25-minute focus sessions, lets users write short post-session notes, and gives them motivation through a like button.
 
 ---
 
@@ -21,21 +18,38 @@ Welcome to this exciting challenge! I've designed this experience to help you ap
 
 By completing this challenge, you'll master:
 
-- ✅ {SKILL_1}
-- ✅ {SKILL_2}
-- ✅ {SKILL_3}
+- ✅ React component structure with JSX
+- ✅ useState and useEffect hooks
+- ✅ Conditional rendering
+- ✅ Passing props between components
+- ✅ Handling forms and list rendering
 
 ---
 
 ## 📁 Project Structure
 
-```bash
-{CHALLENGE_FOLDER_NAME}/
-├── starter/           # Where you write your solution
-│   ├── setup.js       # Automatic setup script
-│   ├── package.json   # Project config and scripts
-├── solution/          # Maintainer's solution (revealed later)
-└── README.md          # Challenge instructions (this file)
+```
+productivity-pulse/
+├── starter/                        # Your main project workspace
+│   ├── src/                        # Source code lives here
+│   │   ├── components/             # React components
+│   │   │   ├── Timer.jsx           # Countdown logic + session handling
+│   │   │   ├── NotesList.jsx       # Display and manage notes
+│   │   │   └── Motivation.jsx      # Like button with counter
+│   │   ├── styles/                 # Component-specific styles
+│   │   │   ├── Timer.css           # Timer component styles
+│   │   │   ├── NotesList.css       # NotesList component styles
+│   │   │   └── Motivation.css      # Motivation component styles
+│   │   ├── App.jsx                 # Main app component
+│   │   ├── App.css                 # App-level styles
+│   │   └── main.jsx                # Entry point (ReactDOM.render)
+│   ├── .gitignore                  # Ignore node_modules, etc.
+│   ├── package.json                # Dependencies & scripts
+│   ├── README.md                   # Your custom README for the challenge
+│   └── vite.config.js              # (if using Vite)
+├── solution/                       # Solution files (don't touch unless unlocked)
+│   └── ...                         # Reference implementation
+└── README.md                       # Main instructions file (you've been reading this)
 ```
 
 ---
@@ -44,61 +58,158 @@ By completing this challenge, you'll master:
 
 ### 🛠 Prerequisites
 
-- Node.js (version 18+)
+Make sure you have these installed:
+
+- **Node.js** (v18+) – [Download here](https://nodejs.org/)
+- **npm** or **yarn**
 - A code editor (we recommend [VS Code](https://code.visualstudio.com/))
-- A terminal (Linux/macOS/Windows)
+- Git for version control
 
-### ⚡ Lightning-Fast Setup
-
-Inside the `starter/` folder, run my custom setup command:
+### ⚡ Setup Instructions
 
 ```bash
-npm run setup
+# 1. Navigate to the starter folder
+cd productivity-pulse/starter
+
+# 2. Install project dependencies
+npm install
+
+# 3. Start the development server
+npm run dev
+
+# 4. Open your browser to http://localhost:3000
 ```
 
-This powerful script will:
-
-- Install all dependencies
-- Run any required initialization
-- Start the local dev server (if applicable)
-
-> 🔁 If you run into errors, try deleting `node_modules` and running the setup again.
+> 🔄 If you encounter errors, try deleting `node_modules` and `package-lock.json`, then run `npm install` again.
 
 ---
 
 ## 🎯 Your Mission
 
-{TASK_LIST}
+Create a productivity web app with the following features:
+
+### 🧭 App Features
+
+#### 1. **25-Minute Countdown Timer**
+
+- Starts automatically when app loads.
+- Resets and increments session count after each session ends.
+
+#### 2. **🎉 Congratulatory Message**
+
+- Display a temporary message like “Great job! You’ve completed 1 session!” after each session.
+
+#### 3. **📝 Post-Session Notes**
+
+- Show a form asking "What did you focus on?" after each session.
+- Save submitted notes to a list.
+- Display all previous notes.
+
+#### 4. **❤️ Motivation Likes**
+
+- Show a like button.
+- Each click increases a motivation counter.
+
+---
+
+## 📋 Requirements Checklist
+
+- 25-minute countdown timer that restarts automatically
+- Congratulatory message after each session
+- Form to submit a note after each session
+- Display a list of submitted notes
+- Like button with counter
+- Bonus: Ability to delete a note from the list
+
+---
+
+## 🔧 Suggested Components
+
+Break your app into at least 3 components:
+
+- `<Timer />` – Handles countdown and congratulatory logic
+- `<NotesList />` – Displays session notes
+- `<Motivation />` – Like button and counter
+
+---
+
+## 🎨 Design & UI Guidelines
+
+No strict UI rules — keep it clean and functional. Here are suggestions:
+
+- Use large readable fonts for the timer
+- Display motivation and notes below the timer
+- Animate or highlight the congratulatory message
+
+---
+
+### 🎯 User Experience Goals
+
+- User lands on the page and sees the timer ticking
+- A message appears and the note form is shown after a session
+- Notes persist in the session (no need for database)
+- User gets visual motivation when clicking like
+
+---
+
+## 🧪 Testing Your Solution
+
+```bash
+# Run dev server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+### ✅ Manual Testing Checklist
+
+- Timer works and resets correctly
+- Message and note form appear at correct time
+- Notes show in a list
+- Like button increases the count
+- Responsive and functional UI
 
 ---
 
 ## 📋 Challenge Rules
 
-- ❌ Do **not** touch the `solution/` folder — it's only for review after the challenge ends.
-- ✅ Work only inside the `starter/` folder.
-- 🧹 Try to keep your code clean, commented, and readable.
+- ✅ Only modify files inside the `starter/` folder
+- ✅ You may install and use additional packages
+- ✅ Keep code clean and readable
+- ❌ Do not copy the solution from `solution/`
+
+---
+
+## 💡 Helpful Resources
+
+- 📚 [React Docs](https://react.dev/)
+- 🎨 [CSS-Tricks](https://css-tricks.com/)
+- 🛠️ [MDN Web Docs](https://developer.mozilla.org/)
 
 ---
 
 ## 🚀 Submission Process
 
-Once your masterpiece is ready:
+1. ✅ Complete and test your app inside the `starter/` folder
+2. 📝 Commit your changes:
 
-1. **📝 Commit** your changes inside the `starter/` folder.
-2. **🔄 Push** your solution to your **own fork**.
-3. **📤 Create** a **Pull Request** to the original repository.
+   ```bash
+   git add .
+   git commit -m "Complete Productivity Pulse Challenge"
+   ```
 
-> 🏷 Make sure to **label your PR** with:
->
-> - `frontend`
-> - `{CHALLENGE_NUMBER}`
+3. 🔄 Push to your repository:
 
-See the complete workflow in the [CONTRIBUTING.md](../../CONTRIBUTING.md) file.
+   ```bash
+   git push origin YOURUSERNAME/frontend-challenge-01 #or whatever branch you created
+   ```
+
+4. 📤 Open a Pull Request with the title:  
+   **[Frontend] Productivity Pulse – Your Name**
 
 ---
 
-## 💬 Get Support & Connect
+## 🌟 Ready to Build?
 
-- 🗣️ Ask questions in [GitHub Discussions](https://github.com/Adel2411/web-challenges/discussions)
-- 🔍 Check if someone had the same issue
-- 🤝 Help others and grow together 💙
+_Remember: Every expert was once a beginner. Start coding, stay curious, and build something amazing!_ 🚀

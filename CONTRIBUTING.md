@@ -14,6 +14,7 @@ By following this guide, you'll master:
 - 🍴 **Forking** repositories (making your own copy)
 - 💻 **Cloning** code to your computer
 - 🌿 **Creating branches** (like saving different versions)
+- 🛠️ **Command-line basics** through hands-on practice
 - 🚀 **Pushing** your work to GitHub
 - 📬 **Pull Requests** (sharing your solution with others)
 
@@ -70,7 +71,7 @@ git switch -c YOURNAME/backend-challenge-01
 
 ---
 
-### 🛠 **Step 4: Set Up Your Challenge**
+### 🛠 **Step 4: Set Up Your Challenge Environment**
 
 Time to get everything running! Navigate to your challenge folder:
 
@@ -80,13 +81,23 @@ Time to get everything running! Navigate to your challenge folder:
 cd frontend/challenge-01/starter
 ```
 
-**Then run the magic setup command:**
+**Now here's the important part - read the challenge README:**
 
 ```bash
-npm run setup
+# Open and read the challenge instructions
+cat README.md
 ```
 
-> 🎉 **Sit back and relax!** This installs everything you need and starts the development server.
+> 📚 **Learning Time!** Each challenge README contains:
+>
+> - 📋 **Challenge description** and requirements
+> - 🛠️ **Step-by-step setup commands** you need to run
+> - 💡 **Explanations** of what each command does
+> - 🎯 **Learning objectives** for that specific challenge
+
+**Follow the setup commands listed in the README file.**
+
+> 🎓 **Why this approach?** You'll learn essential development commands while building real projects!
 
 > ✅ **Ready to code!** Your challenge environment is now running.
 
@@ -100,6 +111,7 @@ Here's where the fun begins!
 
 - ✅ **Write all your code inside the `starter/` folder**
 - ✅ **Test your solution** to make sure it works
+- ✅ **Follow the challenge requirements** in the README
 
 > 💪 **Take your time!** There's no rush. Focus on learning and practicing.
 
@@ -150,7 +162,7 @@ The final step - let's share your awesome work with the community!
    - **To:** `Adel2411/web-challenges` (main branch)
 5. **Add a clear title** like:
    - `Frontend challenge 01 - Adel`
-   - `Backend API challenge - Sarah`
+   - `Backend API challenge - Hamid`
 6. **Click "Create pull request"** 📤
 
 > 🎯 **Important:** Your Pull Request should go from **your fork** to the **original repository's main branch**!
@@ -204,8 +216,19 @@ git push origin main
 
 - **Never touch** the `solution/` folder
 - **Always work** in the `starter/` folder
+- **Always read** the challenge README for setup instructions
 - **Pull Requests go to the main branch** of the original repo
 - **Don't worry about perfection** - practice makes progress!
+
+### 🔍 **Challenge Setup Pattern**
+
+Every challenge follows this pattern:
+
+1. Navigate to `starter/` folder
+2. Read the `README.md` file
+3. Follow the setup commands listed
+4. Understand what each command does
+5. Start coding your solution!
 
 ### 🆘 **Need Help?**
 
@@ -220,7 +243,7 @@ git push origin main
 
 **You're now officially contributing like a professional developer!** 💙
 
-Keep practicing, keep submitting, and most importantly - **keep learning**. Each challenge makes you stronger, and every Pull Request builds your confidence.
+Keep practicing, keep submitting, and most importantly - **keep learning**. Each challenge makes you stronger, every command you learn builds your skills, and every Pull Request builds your confidence.
 
 **Welcome to the developer community!** 🚀
 

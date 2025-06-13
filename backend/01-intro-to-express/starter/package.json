@@ -4,8 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+<<<<<<< HEAD
     "setup": "node setup.js",
     "dev": "node --watch src/index.js",
+=======
+    "dev": "node --watch src/*",
+>>>>>>> 35b2c030c4f70d9b27a700483c5ec2860939f07a
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
