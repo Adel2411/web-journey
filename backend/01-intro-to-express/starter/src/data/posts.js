@@ -1,4 +1,4 @@
-const posts = [
+let posts = [
   {
     id: 1,
     title: "Why I Love Express",
@@ -20,7 +20,7 @@ const posts = [
     content: "Learn how to design clean and maintainable REST APIs.",
     author: "Alice",
     createdAt: "2025-06-10T14:15:00.000Z",
-  },
+  }
 ];
 
 export default posts;
