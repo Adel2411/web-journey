@@ -21,7 +21,7 @@ export const getPostById = (req, res)=>{
 
 //Filter blog posts by author
 export const getPostByauthor = (req,res)=>{
-  const Author = posts.filter(p=> p.author.toLowerCase() ===req.params.author.toLowerCase() )
+  const Author = posts.filter(p=> p.author.toLowerCase() ===req.query.author.toLowerCase() )
   if(Author.length===0){
     res.status(404).json({
     message: "author not found" });
