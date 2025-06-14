@@ -1,10 +1,11 @@
 import express from "express";
 import { routes } from "./routes/posts.js";
 import logger from "./middleware/logger.js";
+import timestampMiddleware from "./middleware/timesatamp.js";
 
 const app = express();
 
-
+app.use(timestampMiddleware);
 const PORT = 5000;
 app.use(express.json());
 

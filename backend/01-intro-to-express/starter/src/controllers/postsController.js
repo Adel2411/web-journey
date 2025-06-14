@@ -37,7 +37,8 @@ export const createPost=(req,res)=>{
     title : req.body.title,
     content : req.body.content,
     author : req.body.author,
-    createdAt : new Date().toISOString()
+    createdAt : new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   }
   posts.push(post);
   res.status(201).json({
@@ -50,7 +51,7 @@ export const createPost=(req,res)=>{
 //Edit a blog post
 export const updatePost = (req,res)=>{
   const id = parseInt(req.params.id);
-const post = posts.find(p => p.id === id)
+  const post = posts.find(p => p.id === id)
   if(!post){
     return res.status(404).json({
       message: "Post not found"
@@ -59,6 +60,7 @@ const post = posts.find(p => p.id === id)
   post.title = req.body.title || post.title;
   post.content = req.body.content || post.content;
   post.author = req.body.author || post.author;
+  post.updatedAt = req.body.updatedAt;
   
   res.status(200).json({
     message: "Post updated successfully",
