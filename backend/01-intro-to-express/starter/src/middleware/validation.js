@@ -8,7 +8,7 @@ export function validationPostCreateBlogPost (req, res, next) {
     if (!post.content || typeof post.content !== "string" || post.content.trim() === "")
         wrongFileds.push("content");
 
-    if (!post.autho || typeof post.autho !== "string" || post.author.trim() === "")
+    if (!post.author || typeof post.author !== "string" || post.author.trim() === "")
         wrongFileds.push("author");
 
     if (wrongFileds.length > 0) {
@@ -31,7 +31,7 @@ export function validationPutUpdateBlogPostById (req, res, next) {
     if (
        (post.title || typeof post.title !== "string" || post.title.trim() === "") ||
        (post.content || typeof post.content !== "string" || post.content.trim() === "") ||
-       (post.autho || typeof post.autho !== "string" || post.autho.trim() === "")) { 
+       (post.author || typeof post.author !== "string" || post.author.trim() === "")) { 
        return res.status(400).json({ error: "Validation failed", message: "All provided fields must be non-empty strings",});
     }
     next();
