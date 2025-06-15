@@ -12,3 +12,7 @@ routes.get("/posts/author/:author", logger, getPostByAuthor);
 routes.post("/posts", logger, validationPostCreateBlogPost, postCreateBlogPost);
 
 routes.put("/posts/:id", logger, validationPutUpdateBlogPostById, putUpdateBlogPostById);
+
+routes.delete("/posts/:id", logger, (req, res) => {
+  res.status(501).json({ message: "Not implemented" });
+});
