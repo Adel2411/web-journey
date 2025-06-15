@@ -9,3 +9,5 @@ routes.get("/posts/:id", logger, getPostById);
 routes.get("/posts/author/:author", logger, getPostByAuthor);
 
 routes.post("/posts", logger, validationPostCreateBlogPost, postCreateBlogPost);
+
+routes.put("/posts/:id", logger, validationPutUpdateBlogPostById, putUpdateBlogPostById);
