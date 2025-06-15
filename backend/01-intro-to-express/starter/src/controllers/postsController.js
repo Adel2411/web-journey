@@ -42,3 +42,19 @@ export const postCreateBlogPost  = (req, res) => {
   }
   res.status(201).json({ message: "Blog post created successfully", post: newBlogPost });
 }
+
+export const putUpdateBlogPostById = (req, res) => {
+  const Id = parseInt(req.params.id);
+  const post = posts.find((p) => p.id === Id);
+
+  if (!post) {
+    return res.status(404).json({ error: "Post not found" });
+  }
+
+  post.title = title;
+  post.content = content;
+  post.author = author;
+  post.createdAt = new Date().toISOString();
+
+  res.json({ message: "Blog post updated successfully", post });
+}
