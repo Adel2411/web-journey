@@ -58,3 +58,16 @@ export const putUpdateBlogPostById = (req, res) => {
 
   res.json({ message: "Blog post updated successfully", post });
 }
+
+export const deleteBlogPostById = (req, res) => {
+  const Id = parseInt(req.params.id);
+  const post = posts.findIndex((p) => p.id === Id);
+
+  if (post === -1) {
+    return res.status(404).json({ error: "Post not found" });
+  }
+
+  posts.splice(post, 1); // Remove the post from the array
+
+  res.json({ message: "Blog post deleted successfully", postId: Id });
+}
