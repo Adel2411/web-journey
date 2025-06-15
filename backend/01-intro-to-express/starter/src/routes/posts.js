@@ -1,7 +1,20 @@
 import express from "express";
-import logger from "../middleware/logger.js";
-import { getPosts } from "../controllers/postsController.js";
-
+import { getPostById,filterPostsByAuthor,createPost,updatePost,deletePost } from "../controllers/postsController.js";
+import { validatePost, validateUpdatePost } from '../middleware/validation.js';
+import addTimestamps from '../middleware/timestamp.js';
 export const routes = express.Router();
 
-routes.get("/", logger, getPosts);
+// GET /posts or /posts?author=...
+routes.get('/', filterPostsByAuthor);  
+
+// GET /posts/:id
+routes.get('/:id', getPostById);
+
+// POST /posts
+routes.post('/', validatePost, addTimestamps, createPost);
+
+// PUT /posts/:id
+routes.put('/:id', validateUpdatePost, addTimestamps, updatePost);
+
+// DELETE /posts/:id
+routes.delete('/:id', deletePost);
