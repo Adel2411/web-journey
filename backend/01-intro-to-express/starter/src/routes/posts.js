@@ -4,4 +4,6 @@ import { getPosts } from "../controllers/postsController.js";
 
 export const routes = express.Router();
 
-routes.get("/", logger, getPosts);
+routes.get("/posts", logger, getPosts);
+routes.get("/posts/:id", logger, getPostById);
+routes.get("/posts/author/:author", logger, getPostByAuthor);
