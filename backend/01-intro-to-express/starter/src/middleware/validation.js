@@ -29,10 +29,10 @@ export function validationPutUpdateBlogPostById (req, res, next) {
     }
 
     if (
-       (post.title || typeof post.title !== "string" || post.title.trim() === "") ||
-       (post.content || typeof post.content !== "string" || post.content.trim() === "") ||
-       (post.author || typeof post.author !== "string" || post.author.trim() === "")) { 
-       return res.status(400).json({ error: "Validation failed", message: "All provided fields must be non-empty strings",});
+       (post.title && (typeof post.title !== "string" || post.title.trim() === "")) ||
+       (post.content && (typeof post.content !== "string" || post.content.trim() === "")) ||
+       (post.author && (typeof post.author !== "string" || post.author.trim() === ""))) { 
+        return res.status(400).json({ error: "Validation failed", message: "All provided fields must be non-empty strings",});
     }
     next();
 }
