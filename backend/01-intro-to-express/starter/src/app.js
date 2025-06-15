@@ -6,7 +6,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use("/", routes);
+app.use("/posts", logger, routes);
 
 app.listen(PORT, () => {
   console.log("Server is running on http://localhost:3000");

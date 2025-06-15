@@ -5,14 +5,12 @@ import { validationPostCreateBlogPost, validationPutUpdateBlogPostById } from ".
 
 export const routes = express.Router();
 
-routes.get("/posts", logger, getPosts);
-routes.get("/posts/:id", logger, getPostById);
-routes.get("/posts/author/:author", logger, getPostByAuthor);
+routes.get("/", getPosts);
+routes.get("/:id", getPostById);
+routes.get("/author/:author", getPostByAuthor);
 
-routes.post("/posts", logger, validationPostCreateBlogPost, postCreateBlogPost);
+routes.post("/", validationPostCreateBlogPost, postCreateBlogPost);
 
-routes.put("/posts/:id", logger, validationPutUpdateBlogPostById, putUpdateBlogPostById);
+routes.put("/:id", validationPutUpdateBlogPostById, putUpdateBlogPostById);
 
-routes.delete("/posts/:id", logger, (req, res) => {
-  res.status(501).json({ message: "Not implemented" });
-});
+routes.delete("/:id", deleteBlogPostById);
