@@ -1,4 +1,5 @@
 import express from "express";
+import logger from "./middleware/logger.js";
 import { routes } from "./routes/posts.js";
 
 const PORT = 3000;

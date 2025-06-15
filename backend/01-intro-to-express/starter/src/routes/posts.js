@@ -1,6 +1,6 @@
 import express from "express";
-import logger  from "../middleware/logger.js";
-import { getPosts, getPostById, getPostByAuthor, postCreateBlogPost, putUpdateBlogPostById } from "../controllers/postsController.js"; 
+import logger from "../middleware/logger.js";
+import { getPosts, getPostById, getPostByAuthor, postCreateBlogPost, putUpdateBlogPostById, deleteBlogPostById } from "../controllers/postsController.js"; 
 import { validationPostCreateBlogPost, validationPutUpdateBlogPostById } from "../middleware/validation.js";
 
 export const routes = express.Router();
