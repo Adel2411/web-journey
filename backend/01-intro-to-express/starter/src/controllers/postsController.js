@@ -1,7 +1,7 @@
 import posts from "../data/posts.js";
 
 export const getPosts = (req, res) => {
-  res.json(posts);
+  res.status(201).json(posts);
 };
 
 export const getPostById = (req, res) => {
