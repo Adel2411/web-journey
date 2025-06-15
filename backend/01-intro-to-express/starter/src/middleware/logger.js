@@ -3,7 +3,15 @@ export default function logger(req, res, next) {
   const method = req.method;
   const url = req.originalUrl;
   const headers = JSON.stringify(req.headers);
-  const body = req.body && Object.keys(req.body).length > 0? JSON.stringify(req.body): "undefined";
+
+  let body = "undefined";
+
+  // Only check for body if the method normally has one
+  if (["POST", "PUT"].includes(method)) {
+    if (req.body && Object.keys(req.body).length > 0) {
+      body = JSON.stringify(req.body);
+    }
+  }
 
   console.log(`[${timestamp}] ${method} ${url} - Headers: ${headers} - Body: ${body}`);
   next();
