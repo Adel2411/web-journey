@@ -3,8 +3,13 @@ import posts from "../data/posts.js";
 
 // Return all blog posts
 export const getPosts = (req, res) => {
-  res.status(200).json(posts);
+  let result = posts;
+  if (req.query.author) {
+    result = result.filter(post => post.author === req.query.author);
+  }
+  res.status(200).json(result);
 };
+
 
 // Return a single blog post by ID 
 export const getPostById = (req, res)=>{
@@ -19,15 +24,7 @@ export const getPostById = (req, res)=>{
      return post ;
 }
 
-//Filter blog posts by author
-export const getPostByauthor = (req,res)=>{
-  const Author = posts.filter(p=> p.author.toLowerCase() ===req.query.author.toLowerCase() )
-  if(Author.length===0){
-    res.status(404).json({
-    message: "author not found" });
-  }
-  res.status(200).json(Author);
-}
+
 
 
 //Create a new blog post
