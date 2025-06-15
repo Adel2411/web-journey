@@ -30,16 +30,15 @@ export const postCreateBlogPost  = (req, res) => {
     return res.status(409).json({ message: 'Blog Post already exists' });
   } 
 
-  else { 
-    const newBlogPost = {
-      id: posts.length + 1,
-      title: post.title,
-      content: post.content,
-      author: post.author,
-      createdAT: new Date().toISOString(),
-    };
+  const newBlogPost = {
+    id: posts.length + 1,
+    title: post.title,
+    content: post.content,
+    author: post.author,
+    createdAT: new Date().toISOString(),
+  };
   posts.push(newBlogPost);
-  }
+  
   res.status(201).json({ message: "Blog post created successfully", post: newBlogPost });
 }
 
