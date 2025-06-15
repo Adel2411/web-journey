@@ -35,7 +35,7 @@ export const postCreateBlogPost  = (req, res) => {
     title: post.title,
     content: post.content,
     author: post.author,
-    createdAT: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
   };
   posts.push(newBlogPost);
   
@@ -49,7 +49,7 @@ export const putUpdateBlogPostById = (req, res) => {
   if (!post) {
     return res.status(404).json({ error: "Post not found" });
   }
-
+  const { title, content, author} = req.body; 
   post.title = title;
   post.content = content;
   post.author = author;
