@@ -12,3 +12,12 @@ export const getPostById = (req, res) => {
   } 
   res.json(post);
   }
+
+export const getPostByAuthor = (req, res) => {
+  const author = req.params.author;
+  const post = posts.find((p) => p.author.toLowerCase() === author.toLowerCase());
+  if(!post) {
+    return res.status(404).json({ error: "No post found with this name of author"});
+  }
+  res.json(post);
+}
