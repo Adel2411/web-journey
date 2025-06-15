@@ -1,13 +1,22 @@
+
 import express from "express";
-import { routes } from "./routes/posts.js";
+import postsRoutes from "./routes/posts.js";
 
-const PORT = 3000;
 const app = express();
+const PORT = process.env.PORT || 3000;
 
+// Enable JSON parsing
 app.use(express.json());
 
-app.use("/posts", routes);
+// Main route for blog posts
+// on d'autre term : "For any request that starts with /posts, use the routes defined in postsRoutes."
+app.use("/posts", postsRoutes);
+
+
+app.use((req, res) => {
+  res.status(404).json({ error: "Route not found" });
+});
 
 app.listen(PORT, () => {
-  console.log("Server is running on http://localhost:3000");
+  console.log(` Server running on http://localhost:${PORT}`);
 });
