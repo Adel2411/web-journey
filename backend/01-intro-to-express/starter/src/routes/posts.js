@@ -7,3 +7,5 @@ export const routes = express.Router();
 routes.get("/posts", logger, getPosts);
 routes.get("/posts/:id", logger, getPostById);
 routes.get("/posts/author/:author", logger, getPostByAuthor);
+
+routes.post("/posts", logger, validationPostCreateBlogPost, postCreateBlogPost);
