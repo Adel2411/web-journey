@@ -21,3 +21,24 @@ export const getPostByAuthor = (req, res) => {
   }
   res.json(post);
 }
+
+export const postCreateBlogPost  = (req, res) => {
+  const post = req.body;
+  const existBlogPost = posts.find((p) => p.title === post.title && p.author === post.author);
+
+  if (existBlogPost) {
+    return res.status(409).json({ message: 'Blog Post already exists' });
+  } 
+
+  else { 
+    const newBlogPost = {
+      id: posts.length + 1,
+      title: post.title,
+      content: post.content,
+      author: post.author,
+      createdAT: new Date().toISOString(),
+    };
+  posts.push(newBlogPost);
+  }
+  res.status(201).json({ message: "Blog post created successfully", post: newBlogPost });
+}
