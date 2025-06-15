@@ -1,4 +1,7 @@
 export default function logger(req, res, next) {
-  console.log("Request Headers:", req.headers);
+  const time = new Date().toISOString();
+  
+  console.log(`[${time}] + ${req.method} /posts - Headers : ${JSON.stringify(req.headers)} - Body : ${req.body ? JSON.stringify(req.body) : undefined}`);
+
   next();
 }
