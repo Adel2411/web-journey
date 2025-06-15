@@ -6,7 +6,6 @@ export default function logger(req, res, next) {
 
   let body = "undefined";
 
-  // Only check for body if the method normally has one
   if (["POST", "PUT"].includes(method)) {
     if (req.body && Object.keys(req.body).length > 0) {
       body = JSON.stringify(req.body);

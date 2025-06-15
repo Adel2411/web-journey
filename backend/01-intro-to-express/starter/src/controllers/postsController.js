@@ -69,4 +69,5 @@ export const deleteBlogPostById = (req, res) => {
   posts.splice(post, 1); // Remove the post from the array
 
   res.json({ message: "Blog post deleted successfully", postId: Id });
+  
 }

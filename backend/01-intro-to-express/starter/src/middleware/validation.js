@@ -20,6 +20,7 @@ export function validationPostCreateBlogPost (req, res, next) {
     next();
 }
 
+
 export function validationPutUpdateBlogPostById (req, res, next) {
     const post = req.body;
 
