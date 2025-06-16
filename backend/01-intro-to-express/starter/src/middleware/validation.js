@@ -21,6 +21,7 @@ export function validation(req, res, next) {
         message: `Missing required fields: ${missingFields.join(", ")}`,
       });
     }
+    
   }
 
   if (req.method === "PUT") {

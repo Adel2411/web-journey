@@ -46,22 +46,22 @@ export const createPost = (req, res) => {
 export const putPostById = (req, res) => {
   const { id } = req.params;  
   const postIndex = posts.findIndex(p => p.id === parseInt(id));
-  
+
   if (postIndex === -1) {
     return res.status(404).json({ error: "Post not found" });
   }
 
-posts[postIndex] = {
-  ...posts[postIndex],
-  ...req.body,
-  updatedAt: new Date().toISOString(),
-};
-res.status(200).json({
-  message: "Post updated successfully",
-  post: posts[postIndex],
-});
+  posts[postIndex] = {
+    ...posts[postIndex],
+    ...req.body,
+    updatedAt: new Date().toISOString(),
+  };
 
-}
+  return res.status(200).json({
+    message: "Post updated successfully",
+    post: posts[postIndex],
+  });
+};
 
 export const deletePostById = (req, res) => {
   const { id } = req.params;

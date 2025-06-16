@@ -1,11 +1,13 @@
 import express from "express";
 import { routes } from "./routes/posts.js";
+import logger from "./middleware/logger.js";
 
 const PORT = 3000;
 const app = express();
 
 app.use(express.json());
 
+app.use("/posts", logger);
 app.use("/posts", routes);
 
 app.listen(PORT, () => {
