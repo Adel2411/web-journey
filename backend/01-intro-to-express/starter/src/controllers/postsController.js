@@ -1,6 +1,4 @@
-import { get } from "http";
 import posts from "../data/posts.js";
-import { create } from "domain";
 
 export const getPosts = (req, res) => {
 
