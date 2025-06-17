@@ -1,7 +1,18 @@
 import posts from "../data/posts.js";
 
 export const getPosts = (req, res) => {
+  const author = req.query.author;
+  
+  if (author) {
+    console.log("author:", author);
+    const result = posts.filter(post => post.author === author);
+    console.log("result:", result);
+    return res.status(200).json(result);
+  }
+  else {
   res.json(posts);
+  console.log("All posts returned");
+  }
 };
 
 export const getPostsByid = (req, res) => {
@@ -14,13 +25,6 @@ export const getPostsByid = (req, res) => {
         }
     })
     res.status(200).json(post)
-}
-
-export const getPostByAuthor = (req, res) => {
-  const author = req.query.author
-  console.log("author:", author)
-  const result = posts.filter(post => post.author === author);
-  res.status(200).json(result)
 }
 
 export const createPost = (req, res) => {
