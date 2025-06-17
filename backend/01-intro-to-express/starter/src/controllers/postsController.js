@@ -32,13 +32,14 @@ export const getPostsByAuthor = (req, res) => {
 }
 
 export const createPost = (req, res) => {
-  const { title, content, author } = req.body;
+  const { title, content, author, createdAt, updatedAt } = req.body;
   const newPost = {
     id: posts.length + 1,
     title,
     content,
     author,
-    createdAt: new Date().toISOString()
+    createdAt,
+    updatedAt
   };
   posts.push(newPost);
   res.status(201).json(newPost);
@@ -52,8 +53,8 @@ export const updatePost = (req, res) => {
     return res.status(404).json({ message: "Post not found" });
   }
 
-  const { title, content, author } = req.body;
-  const updatedPost = { ...posts[postIndex], title, content, author }; //Object Spread Syntax
+  const { title, content, author, updatedAt } = req.body;
+  const updatedPost = { ...posts[postIndex], title, content, author, updatedAt }; //Object Spread Syntax
 
   posts[postIndex] = updatedPost;
   res.json(updatedPost);
