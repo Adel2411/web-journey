@@ -1,22 +1,28 @@
 import "../styles/Timer.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState , useRef} from "react";
 
 function Timer() {
   const originalSessionDuration = 1500;
   const [timeCount, setTimeCount] = useState(0);
   const [sessionCount, setSessionCount] = useState(0);
   const [sessionDuration, setSessionDuration] = useState(originalSessionDuration);
-  const [userInput, setUserInput] = useState(""); // stores raw input
-  const [error, setError] = useState(""); // stores error message
-
+  const [userInput, setUserInput] = useState(""); 
+  const [errorMessage, setErrorMessage] = useState(""); 
+  const sessionDurationRef = useRef(sessionDuration);
   const minutes = Math.floor(timeCount / 60);
   const seconds = timeCount % 60;
 
+
+  // make sure session duration is always up to date
+  useEffect(() => {
+    sessionDurationRef.current = sessionDuration;
+  }, [sessionDuration]);
+
+  // timer logic function
   const counter = () => {
     setTimeCount(timeCount => {
       const newTimeCount = timeCount + 1;
-
-      if (newTimeCount === sessionDuration) {
+      if (newTimeCount === sessionDurationRef.current) {
         setSessionCount(sessionCount => sessionCount + 1);
         return 0;
       }
@@ -25,24 +31,21 @@ function Timer() {
     });
   };
 
-  // triggered when user clicks "Update"
-  const confirmSessionDuration = () => {
+  // allow update the session duration
+  const updateSessionDuration = () => {
     const numericValue = Number(userInput);
 
-    if (
-      userInput === "" ||
-      isNaN(numericValue) ||
-      numericValue <= 0 ||
-      !Number.isInteger(numericValue)
-    ) {
-      setError("Please enter a valid positive whole number.");
+    // check if user entered invalid duration
+    if (isNaN(numericValue) ||numericValue <= 0 ||!Number.isInteger(numericValue)) {
+      setErrorMessage("enter a correct duration");
       return;
     }
 
-    // if valid input:
+    // valid duration here
     setSessionDuration(numericValue);
-    setTimeCount(0); // reset timer
-    setError(""); // clear error
+    setTimeCount(0); 
+    setSessionCount(0);
+    setErrorMessage(""); 
   };
 
   useEffect(() => {
@@ -64,10 +67,10 @@ function Timer() {
           value={userInput}
           onChange={e => setUserInput(e.target.value)}
         />
-        <button onClick={confirmSessionDuration}>Update</button>
+        <button onClick={updateSessionDuration}>Update</button>
       </div>
 
-      {error && <div style={{ color: "red" }}>{error}</div>}
+      {errorMessage && <div>{errorMessage}</div>}
     </div>
   );
 }
