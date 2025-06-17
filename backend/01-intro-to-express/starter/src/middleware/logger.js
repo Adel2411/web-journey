@@ -1,4 +1,5 @@
 export default function logger(req, res, next) {
+  console.log("Request received at:", new Date().toISOString());
   console.log("Request url:", req.url);
   console.log("Request method:", req.method);
   console.log("Request Headers:", req.headers);

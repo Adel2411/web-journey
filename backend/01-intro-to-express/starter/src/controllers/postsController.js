@@ -18,16 +18,13 @@ export const getPostsByid = (req, res) => {
 
 export const getPostByAuthor = (req, res) => {
   const author = req.query.author
-  console.log("Function called!");
-  console.log("authorrrrrrrrrrrrrrr:", author)
+  console.log("author:", author)
   const result = posts.filter(post => post.author === author);
   res.status(200).json(result)
 }
 
 export const createPost = (req, res) => {
     const post = req.body
-    console.log(post)
-
     posts.push(post)
     console.log(posts)
 
@@ -37,25 +34,26 @@ export const createPost = (req, res) => {
 
 export const updatePost = (req, res) => {
     const post = req.body
-    const id = post.id
-    console.log(post)
+    const id = parseInt(req.params.id);
 
     const index = posts.findIndex((post) => post.id === id);
+    if (index === -1) {
+        return res.status(404).json({ error: "Post not found" });
+    }
 
-    const { title, content, author } = req.body;
+    const { title, content, author, updatedAt } = req.body;
     if (title) posts[index].title = title;
     if(content) posts[index].content = content;
     if(author) posts[index].author = author;
+    posts[index].updatedAt = updatedAt;
 
-    console.log(posts)
-    res.status(200).json(posts)
+    res.status(200).json(posts);
 }
 
 export const deletePost = (req, res) => {
     const id = parseInt(req.params.id)
-    console.log(id)
 
     const index = posts.findIndex((post) => post.id === id);
-    const result = posts.splice(index, 1);
+    posts.splice(index, 1);
     res.status(200).json(posts)
 }
