@@ -1,6 +1,6 @@
 import "../styles/NotesList.css";
 
-function NotesList({ notes }) {
+function NotesList({ notes, deleteNote }) {
   return (
     <div className="notes-list">
       <h3>📝 Notes</h3>
@@ -9,7 +9,12 @@ function NotesList({ notes }) {
       ) : (
         <ul>
           {notes.map((note, index) => (
-            <li key={index}>{note}</li>
+            <li key={index}>
+              <span className="note-text">{note}</span>
+              <button className="note-delete-btn" onClick={() => deleteNote(index)}>
+                Delete
+              </button>
+            </li>
           ))}
         </ul>
       )}
