@@ -1,4 +1,73 @@
 .timer {
-  background-color: red;
+  background-color: #1e1e2f;
+  color: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  max-width: 400px;
+  margin: 2rem auto;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.timer input[type="number"]::-webkit-outer-spin-button,
+.timer input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ✅ Removes number input arrows in Firefox */
+.timer input[type="number"] {
+  appearance: textfield;
+}
+
+.time-display {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.session-info {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.input-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.input-controls input {
+  padding: 0.6rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.input-controls button {
+  padding: 0.6rem;
+  border: none;
+  background-color: #4caf50;
   color: white;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.input-controls button:hover {
+  background-color: #43a047;
+}
+
+.error-message {
+  color: #ff5252;
+  margin-top: 0.5rem;
+}
+
+.congrats-message {
+  color: #00e676;
+  margin-top: 0.5rem;
+  font-weight: bold;
 }

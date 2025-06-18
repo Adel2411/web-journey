@@ -33,7 +33,7 @@ function Timer() {
           const newSessionCount = sessionCount + 1;
           setCongratsMessage(`GG you completed ${newSessionCount} session`);
           return newSessionCount;
-          
+
           });
         
         return 0;
@@ -68,26 +68,27 @@ function Timer() {
   }, [sessionDuration]);
 
   return (
-    <div className="timer">
-      <div>
-        {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
-      </div>
-
-      <div>Session count: {sessionCount}</div>
-      <div>
-
-        <input
-          type="number"
-          placeholder="Enter session duration in seconds"
-          value={userInput}
-          onChange={e => setUserInput(e.target.value)}
-        />
-        <button onClick={updateSessionDuration}>Update</button>
-      </div>
-      {errorMessage && <div>{errorMessage}</div>}
-      {congratsMessage && <div>{congratsMessage}</div>}
+  <div className="timer">
+    <div className="time-display">
+      {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
     </div>
-  );
+
+    <div className="session-info">Session count: {sessionCount}</div>
+
+    <div className="input-controls">
+      <input
+        type="number"
+        placeholder="Enter session duration in seconds"
+        value={userInput}
+        onChange={e => setUserInput(e.target.value)}
+      />
+      <button onClick={updateSessionDuration}>Update</button>
+    </div>
+
+    {errorMessage && <div className="error-message">{errorMessage}</div>}
+    {congratsMessage && <div className="congrats-message">{congratsMessage}</div>}
+  </div>
+);
 }
 
 export default Timer;
