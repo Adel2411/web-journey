@@ -1,15 +1,23 @@
-import "./App.css";
+import { useState } from "react";
 import Timer from "./components/Timer";
 import NotesList from "./components/NotesList";
 import Motivation from "./components/Motivation";
+import "./App.css";
 
 function App() {
-  return (
-    <div className="app-container">
-      <h1 className="app-heading">I hate my life!</h1>
+  const [notes, setNotes] = useState([]);
+   
+  const addNote = (newNote) => {
+  if (newNote.trim() !== "") {
+    setNotes(notes => notes.concat(newNote));
+  }
+};
 
-      <Timer />
-      <NotesList />
+
+  return (
+    <div className="app">
+      <Timer addNote={addNote} />
+      <NotesList notes={notes} />
       <Motivation />
     </div>
   );

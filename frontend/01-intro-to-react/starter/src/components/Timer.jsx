@@ -1,11 +1,11 @@
 import "../styles/Timer.css";
-import { useEffect, useState , useRef} from "react";
+import { useEffect, useState } from "react";
 
-function Timer() {
+function Timer({ addNote }) {
   // 25 min session duration
   const originalSessionDuration = 1500;
   // timer
-  const [timeCount, setTimeCount] = useState(0);
+  const [timeCount, setTimeCount] = useState(originalSessionDuration);
   // session counter
   const [sessionCount, setSessionCount] = useState(0);
   // session duration
@@ -16,6 +16,12 @@ function Timer() {
   const [errorMessage, setErrorMessage] = useState(""); 
   // congrats message
   const [congratsMessage, setCongratsMessage] = useState("");
+  // note form
+  const [showNoteForm, setShowNoteForm] = useState(false);
+  // note input
+  const [noteInput, setNoteInput] = useState("");
+  // pause timer for writing and sending note 
+  const [pause, setPause] = useState(false); 
 
   const minutes = Math.floor(timeCount / 60);
   const seconds = timeCount % 60;
@@ -25,18 +31,19 @@ function Timer() {
 
     setTimeCount(timeCount => {
 
-      const newTimeCount = timeCount + 1;
-      if (newTimeCount === sessionDuration) {
+      const newTimeCount = timeCount - 1;
+      if (newTimeCount === 0) {
 
           setSessionCount(sessionCount => {
 
           const newSessionCount = sessionCount + 1;
           setCongratsMessage(`GG you completed ${newSessionCount} session`);
           return newSessionCount;
-
           });
-        
-        return 0;
+
+        setShowNoteForm(true);
+        setPause(true); 
+        return sessionDuration;
       }
 
       return newTimeCount;
@@ -54,18 +61,30 @@ function Timer() {
       return;
     }
 
-    // valid duration here
+    // if duration is valid set session duration and timer to new duration and set session count to 0
     setSessionDuration(numericValue);
-    setTimeCount(0); 
+    setTimeCount(numericValue); 
     setSessionCount(0);
+    // make sure only timer and input for duration gonne be visible and timer is running
     setErrorMessage("");
     setCongratsMessage(""); 
+    setPause(false);
+    setShowNoteForm(false);
+  };
+
+  // function for submitting note
+  const noteSubmit = () => {
+    addNote(noteInput); 
+    setNoteInput("");
+    setShowNoteForm(false);
+    setPause(false); 
   };
 
   useEffect(() => {
+    if (pause) return;
     const interval = setInterval(counter, 1000);
     return () => clearInterval(interval);
-  }, [sessionDuration]);
+  }, [sessionDuration, pause]);
 
   return (
   <div className="timer">
@@ -87,7 +106,18 @@ function Timer() {
 
     {errorMessage && <div className="error-message">{errorMessage}</div>}
     {congratsMessage && <div className="congrats-message">{congratsMessage}</div>}
+    {showNoteForm && (
+        <div className="note-form">
+          <textarea
+            placeholder="What did you focus on?"
+            value={noteInput}
+            onChange={(e) => setNoteInput(e.target.value)}
+          />
+          <button onClick={noteSubmit}>Save Note</button>
+        </div>
+    )}
   </div>
+  
 );
 }
 
