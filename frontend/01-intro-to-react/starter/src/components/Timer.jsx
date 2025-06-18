@@ -2,28 +2,40 @@ import "../styles/Timer.css";
 import { useEffect, useState , useRef} from "react";
 
 function Timer() {
+  // 25 min session duration
   const originalSessionDuration = 1500;
+  // timer
   const [timeCount, setTimeCount] = useState(0);
+  // session counter
   const [sessionCount, setSessionCount] = useState(0);
+  // session duration
   const [sessionDuration, setSessionDuration] = useState(originalSessionDuration);
+  // user input for session duration
   const [userInput, setUserInput] = useState(""); 
+  // error message incase user enters invalid duration
   const [errorMessage, setErrorMessage] = useState(""); 
-  const sessionDurationRef = useRef(sessionDuration);
+  // congrats message
+  const [congratsMessage, setCongratsMessage] = useState("");
+
   const minutes = Math.floor(timeCount / 60);
   const seconds = timeCount % 60;
 
-
-  // make sure session duration is always up to date
-  useEffect(() => {
-    sessionDurationRef.current = sessionDuration;
-  }, [sessionDuration]);
-
   // timer logic function
   const counter = () => {
+
     setTimeCount(timeCount => {
+
       const newTimeCount = timeCount + 1;
-      if (newTimeCount === sessionDurationRef.current) {
-        setSessionCount(sessionCount => sessionCount + 1);
+      if (newTimeCount === sessionDuration) {
+
+          setSessionCount(sessionCount => {
+
+          const newSessionCount = sessionCount + 1;
+          setCongratsMessage(`GG you completed ${newSessionCount} session`);
+          return newSessionCount;
+          
+          });
+        
         return 0;
       }
 
@@ -31,8 +43,9 @@ function Timer() {
     });
   };
 
-  // allow update the session duration
+  // allow updating the session duration by user
   const updateSessionDuration = () => {
+
     const numericValue = Number(userInput);
 
     // check if user entered invalid duration
@@ -45,22 +58,24 @@ function Timer() {
     setSessionDuration(numericValue);
     setTimeCount(0); 
     setSessionCount(0);
-    setErrorMessage(""); 
+    setErrorMessage("");
+    setCongratsMessage(""); 
   };
 
   useEffect(() => {
     const interval = setInterval(counter, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [sessionDuration]);
 
   return (
     <div className="timer">
       <div>
         {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
       </div>
-      <div>Session count: {sessionCount}</div>
 
+      <div>Session count: {sessionCount}</div>
       <div>
+
         <input
           type="number"
           placeholder="Enter session duration in seconds"
@@ -69,8 +84,8 @@ function Timer() {
         />
         <button onClick={updateSessionDuration}>Update</button>
       </div>
-
       {errorMessage && <div>{errorMessage}</div>}
+      {congratsMessage && <div>{congratsMessage}</div>}
     </div>
   );
 }
