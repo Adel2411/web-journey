@@ -74,7 +74,7 @@ export const deletePost = (req, res)=>{
   }
 }
 
-export function getPostByAuthor(req, res) {
+export const getPostByAuthor= (req, res) =>{
   const au = req.params.author;
 
   const author = typeof au === "string" ? au : String(rawAuthor || "");
@@ -89,3 +89,5 @@ export function getPostByAuthor(req, res) {
     res.json(filteredPosts);
   }
 }
+
+ 
