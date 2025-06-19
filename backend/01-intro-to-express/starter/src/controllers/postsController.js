@@ -17,21 +17,30 @@ export const getPostById = (req, res)=>{
 }
 
 // fnctn pour ajouter un post 
-export const addPost = (req, res)=>{
+export const addPost = (req, res) => {
+  try {
+    const { title, author, content } = req.body;
 
-  const Id = posts.length+1;
-  const {title, content, author} = req.body;
-  const createdAt = req;
-  const newPost = {
-    Id,
-    title,
-    content,
-    author,
-    createdAt
-  };
-  posts.push(newPost);
-  res.status(201).json("Post created with success "+ newPost);
-}
+    if (!title || !author || !content) {
+      return res.status(400).json({ error: "Title, author, and content are required" });
+    }
+
+    const newPost = {
+      id: posts.length + 1,
+      title,
+      author,
+      content,
+      createdAt: req.createdAt,
+    };
+
+    posts.push(newPost);
+
+    res.status(201).json(newPost);
+  } catch (error) {
+    console.error("Error in addPost:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 //fnctn pour faire update
 export const updatePost = (req, res)=>{
@@ -65,18 +74,18 @@ export const deletePost = (req, res)=>{
   }
 }
 
-export const getPostByAuthor = (req, res)=>{
-  const author = req.query;
-  if (!author) {
-    return res.status(400).json({ error: "Author query is required" });
-  }
+export function getPostByAuthor(req, res) {
+  const au = req.params.author;
+
+  const author = typeof au === "string" ? au : String(rawAuthor || "");
+
   const filteredPosts = posts.filter(post =>
-    post.author.toLowerCase() === author.toLowerCase()
+    typeof post.author === "string" && post.author.toLowerCase() === author.toLowerCase()
   );
 
-  if (filteredPosts.length > 0) {
-    res.status(200).json(filteredPosts);
-  } else {
-    res.status(404).json({ message: "Author not found!" });
+  if(filteredPosts.length===0){
+    res.status(404).json({message: "Author not found !!"});
+  }else{
+    res.json(filteredPosts);
   }
 }
