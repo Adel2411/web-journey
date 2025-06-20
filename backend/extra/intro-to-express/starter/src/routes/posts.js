@@ -9,7 +9,6 @@ export const routes = express.Router();
 
 
 routes.get("/:id", getPostById);
-routes.get("/", logger, getPosts);
 routes.get("/", getPosts);
 routes.post("/",postValidator, creatPost);
 routes.put("/:id",putValidator, updatPost);
