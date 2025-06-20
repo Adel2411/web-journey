@@ -44,7 +44,6 @@
   background-color: #e0435e;
 }
 
-/* Animations */
 @keyframes slideDownFade {
   0% {
     opacity: 0;

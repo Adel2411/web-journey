@@ -1,62 +1,43 @@
 import React, { useState } from 'react';
 import Timer from './components/Timer';
-import NotesList from './components/NotesList';
 import Motivation from './components/Motivation';
+import NotesList from './components/NotesList';
 import './App.css';
 
-const App = () => {
+function App() {
   const [sessionCount, setSessionCount] = useState(0);
-  const [showCongrats, setShowCongrats] = useState(false);
-  const [showNotes, setShowNotes] = useState(false);
   const [notes, setNotes] = useState([]);
+  const [showNotes, setShowNotes] = useState(false);
 
   const handleSessionComplete = () => {
-    const newCount = sessionCount + 1;
-    setSessionCount(newCount);
-    setShowCongrats(true);
+    setSessionCount(prev => prev + 1);
     setShowNotes(true);
-
-    setTimeout(() => setShowCongrats(false), 4000); // cache après 4 sec
   };
 
-  const handleAddNote = (noteText) => {
-    if (noteText.trim()) {
-      setNotes([...notes, noteText]);
-      setShowNotes(false); // cacher après soumission
+  const handleAddNote = (note) => {
+    setNotes(prevNotes => [note, ...prevNotes]);
+    setShowNotes(false);
+  };
+
+  const getCongratsMessage = () => {
+    if (sessionCount === 0) {
+      return "🎉 Welcome! Ready to start your first session?";
+    } else {
+      return `🎉 Great job! You've completed ${sessionCount} session${sessionCount !== 1 ? 's' : ''}!`;
     }
   };
-
+  
   return (
-    <div className="app">
-      <h1>🧠 Productivity Pulse</h1>
+    <div className="app-container">
+      <h1>⏱️ Productivity Pulse</h1>
 
-      {showCongrats && (
-        <div className="congrats">
-          🎉 Bravo ! Tu as terminé {sessionCount} session{sessionCount > 1 ? 's' : ''} !
-        </div>
-      )}
+      <div className="congrats-msg">{getCongratsMessage()}</div>
 
       <Timer onSessionComplete={handleSessionComplete} />
-
-      {showNotes && (
-        <NotesList onAddNote={handleAddNote} />
-      )}
-
-      {notes.length > 0 && (
-        <div className="previous-notes">
-          <h3>📝 Notes précédentes</h3>
-          <ul>
-            {notes.map((n, i) => <li key={i}>• {n}</li>)}
-          </ul>
-        </div>
-      )}
-
-      <Motivation />
+      <Motivation sessionCount={sessionCount} />
+      {showNotes && <NotesList onAddNote={handleAddNote} notes={notes} />}
     </div>
   );
-};
+}
 
 export default App;
-
-
-

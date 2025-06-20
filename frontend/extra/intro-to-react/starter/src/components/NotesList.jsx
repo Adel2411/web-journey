@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/NotesList.css';
 
-const NotesList = ({ onAddNote }) => {
+const NotesList = ({ onAddNote, notes }) => {
   const [text, setText] = useState('');
 
   const handleSubmit = () => {
@@ -13,13 +13,28 @@ const NotesList = ({ onAddNote }) => {
 
   return (
     <div className="notes-container">
-      <h3>📝 Sur quoi t'es-tu concentré ?</h3>
+      <h3>📝 What did you focus on ?</h3>
+
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Exemple : Création du composant Timer, correction CSS, révision des hooks..."
+        placeholder="Exemple : Study, Work, Reading Books..."
       />
-      <button onClick={handleSubmit}>Ajouter la note</button>
+      <button onClick={handleSubmit}>Add note</button>
+
+      {notes.length > 0 && (
+        <div className="notes-list">
+          <h4>🗒️ Previous Notes</h4>
+          <ul>
+            {notes.map((note, index) => (
+              <li key={index} className="note-card">
+                <span className="note-index">#{index + 1}</span>
+                <p className="note-text">{note}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Timer.css';
 
 const Timer = ({ onSessionComplete }) => {
-  const initialTime = 25 * 60; // 25 minutes
+  const initialTime = 25 * 60; 
   const [seconds, setSeconds] = useState(initialTime);
   const [isRunning, setIsRunning] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
