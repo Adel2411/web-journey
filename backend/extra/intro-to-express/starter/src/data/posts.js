@@ -22,5 +22,8 @@ const posts = [
     createdAt: "2025-06-10T14:15:00.000Z",
   },
 ];
+export let nextId = 4;
+
+export const getNextId = () => nextId++;
 
 export default posts;
