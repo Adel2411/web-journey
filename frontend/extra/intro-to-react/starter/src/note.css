@@ -1,0 +1,50 @@
+note-container {
+  text-align: center;
+  width: 100%;
+
+}
+
+.note-question {
+  margin-bottom: 20px;
+  font-size: 20px;
+    font-weight: bold;
+}
+
+.note-form{
+    margin-bottom: 20px;
+}
+
+.note-input {
+  padding: 10px;
+  font-size: 10px;
+  width: 250px;
+  margin-right: 10px;
+}
+
+.button-save
+{
+  padding: 10px 20px;
+  background-color: #ff69b4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.note-list {
+  margin-top: 20px;
+  font-size: 20px;
+ 
+}
+
+.note-list    ul {
+  list-style-type: decimal;
+ 
+}
+
+.note-list   li {
+    margin-bottom: 10px;
+  font-size: 1rem;
+}
+

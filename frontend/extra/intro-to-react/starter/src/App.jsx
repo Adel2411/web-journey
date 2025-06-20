@@ -1,18 +1,22 @@
-import "./App.css";
-import Timer from "./components/Timer";
-import NotesList from "./components/NotesList";
-import Motivation from "./components/Motivation";
+import React, { useState } from "react";
+import Timer from "./timer";
+import Note from "./note";
+import Motivation from "./motivation";
+import './App.css';
+ 
 
 function App() {
-  return (
-    <div className="app-container">
-      <h1 className="app-heading">Hello World!</h1>
+      const [endSession, setendSession] = useState(false);
+        return (
+            
+               <div className="app-container">
+                  <Motivation />
+                <Timer sessionEnd={() => setendSession(true)} />
+                <Note showNote={endSession}/>
+              
+              </div>
+          );
+ }
 
-      <Timer />
-      <NotesList />
-      <Motivation />
-    </div>
-  );
-}
+ export default App;
 
-export default App;

@@ -1,0 +1,29 @@
+.motivation-container {
+            position: fixed;
+          top: 20px;
+           right: 20px;
+         
+
+
+}
+
+.motivation-button {
+            padding: 15px 25px;
+            font-size: 20px;
+            background-color: #cf2279;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+          }
+
+.likes{
+            font-size: 20px;
+            color: #000000;
+            margin-top: 10px;
+            text-align: center;
+            font-weight: bolder;
+          
+}
+
