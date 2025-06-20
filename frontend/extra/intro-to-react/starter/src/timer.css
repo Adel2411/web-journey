@@ -1,0 +1,32 @@
+
+    .Timer-Container{
+    text-align: center;
+    margin-top: 60px;
+    padding: 20px;
+}
+
+.Timer-Display{
+    font-size: 70px;
+    margin-bottom:20px;
+
+    font-weight: bold;
+}
+
+.session-count {
+  font-size: 23px;
+  color: #444;
+  margin-bottom: 10px;
+   
+}
+
+.Timer-Button{
+  padding: 20px 30px;
+  font-size: 25px;
+  font-weight: bold;
+  color:black;
+  background-color: #eb3cb0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
