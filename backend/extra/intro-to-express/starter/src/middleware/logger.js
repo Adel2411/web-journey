@@ -1,7 +1,4 @@
-export default function logger(req, res, next) {
-  console.log("Request Headers:", req.headers);
-  next();
-}
+
 const logger = (req, res, next) => {
   const timestamp = new Date().toISOString();
   const method = req.method;
