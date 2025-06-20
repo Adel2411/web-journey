@@ -1,3 +1,58 @@
 .motivation {
-  background-color: #f0f0f0;
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  max-width: 400px;
+  margin: 2rem auto;
+  transition: all 0.3s ease;
 }
+
+.motivation-msg {
+  background: linear-gradient(135deg, #dfffd6, #b9fbc0);
+  color: #1a5d1a;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.2rem;
+  border-left: 6px solid #32cd32;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  box-shadow: 0 4px 10px rgba(50, 205, 50, 0.1);
+  animation: slideDownFade 0.4s ease-out;
+}
+
+.motivation p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.motivation button {
+  padding: 0.6rem 1.3rem;
+  font-size: 1rem;
+  background-color: #ff4d6d;
+  border: none;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 3px 8px rgba(255, 77, 109, 0.3);
+}
+
+.motivation button:hover {
+  background-color: #e0435e;
+}
+
+/* Animations */
+@keyframes slideDownFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

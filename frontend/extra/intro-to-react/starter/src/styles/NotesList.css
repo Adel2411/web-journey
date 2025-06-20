@@ -1,4 +1,53 @@
-.notes-list {
-  background-color: black;
-  color: white;
+.notes-container {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06);
+  max-width: 600px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
+
+.notes-container h3 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.notes-container textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 1rem;
+  font-size: 1rem;
+  font-family: 'Segoe UI', sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  resize: vertical;
+  background: #f9f9f9;
+  transition: border-color 0.2s ease;
+}
+
+.notes-container textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  background-color: #fff;
+}
+
+.notes-container button {
+  align-self: flex-end;
+  padding: 0.6rem 1.4rem;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.notes-container button:hover {
+  background-color: #005ecb;
+}
+

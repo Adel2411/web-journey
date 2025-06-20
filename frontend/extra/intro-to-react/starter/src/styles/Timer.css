@@ -1,4 +1,42 @@
 .timer {
-  background-color: red;
-  color: white;
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  max-width: 400px;
+  margin: 2rem auto;
+  transition: all 0.3s ease;
+}
+
+.timer-title {
+  font-size: 1.9rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.time-display {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 1.5rem;
+  letter-spacing: 2px;
+}
+
+.timer-buttons button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  margin: 0.4rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.timer-buttons button:hover {
+  background-color: #556;
 }
