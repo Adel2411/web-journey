@@ -8,12 +8,13 @@
 }
 
 .app-container {
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding: 2rem;
+  overflow-y: auto;
 }
 
 .app-heading {
