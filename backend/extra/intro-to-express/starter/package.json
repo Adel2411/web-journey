@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch src/*",
+    "dev": "node --watch src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "uuid": "^11.1.0"
   }
 }
