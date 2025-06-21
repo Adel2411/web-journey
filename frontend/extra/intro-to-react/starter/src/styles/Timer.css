@@ -1,4 +1,34 @@
+
 .timer {
-  background-color: red;
+  background-color: #ff5e57;
   color: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  text-align: center;
+  position: relative;
+  margin-bottom: 4rem;
+}
+
+.congratsM {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%); 
+  background-color: rgba(255, 94, 87, 0.1); /* ou transparent si je ne veux pas de fond */
+  color: #ff5e57; 
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  animation: fadein 0.5s ease-in-out;
+  visibility: visible;
+  margin-top: 0.5rem; 
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out, visibility 0.5s ;
+  font-size: 0.9rem;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

@@ -1,4 +1,6 @@
 export default function logger(req, res, next) {
-  console.log("Request Headers:", req.headers);
+  const timestamp = new Date().toISOString();
+  const { method, path, headers, body} = req;
+  console.log('[${timestamp}] ${method} ${path} - Headers: ${JSON.stringify(headers)} -Body: ${JSON.stringify(body)}');
   next();
 }

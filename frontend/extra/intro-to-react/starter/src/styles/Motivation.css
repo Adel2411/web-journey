@@ -1,3 +1,20 @@
-.motivation {
-  background-color: #f0f0f0;
+.motiv-container {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.like-button {
+  background-color: transparent;
+  border: 2px solid #ff5e57;
+  color: #ff5e57;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.like-button:hover {
+  background-color: #ff5e57;
+  color: white;
 }
