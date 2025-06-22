@@ -1,9 +1,8 @@
 import express from 'express'
-import postdata from '../data/postdata.js'
+import postdata from '../data/posts.js'
 export const router = express.Router();
-import createdAt ,{updatedAt} from '../middlware/timestamp.js';
-import validatepost from '../middlware/validation.js';
-import validateNewPost from '../middlware/validation.js';
+import createdAt ,{updatedAt} from '../middleware/timesatamp.js';
+import validateNewPost from '../middleware/validation.js';
 
 router.get('/' , (req,res) =>{
  const { author } = req.query ;
@@ -14,7 +13,7 @@ router.get('/' , (req,res) =>{
  res.send(findposts);
 });
 
-router.post('/' ,validateNewPost ,createdAt,updatedAt, (req,res) =>{
+router.post('/' ,validateNewPost ,createdAt, (req,res) =>{
     console.log(req.body);
     const {body} = req;
     const newPost = { id : postdata[postdata.length - 1].id + 1 , ...body};
