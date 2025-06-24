@@ -3,12 +3,13 @@ import { useState, useEffect , useRef } from "react";
 
 
 
-function Timer() {
+function Timer({ setShowNotesForm }) {
 
   const [timeLeft, setTimeLeft] = useState(1500)
   const timerRef = useRef(null)
   const [sessionCont, setSessionCont] = useState(0)
-  const [showMessage, setShoMessage]  = useState(false)
+  const [showMessage, setShowMessage]  = useState(false)
+
 
   const startTimer = () => {
 
@@ -24,11 +25,12 @@ function Timer() {
         timerRef.current = null
 
         setSessionCont((session) => session +1)
-        setShoMessage(true)
+        setShowMessage(true)
+        setShowNotesForm(true)
 
         setTimeout(() => {
 
-          setShoMessage(false)
+          setShowMessage(false)
 
         }, 4000)
         return 0;
@@ -97,6 +99,5 @@ function Timer() {
   )
 
 }
-
 
 export default Timer;
