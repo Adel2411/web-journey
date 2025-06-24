@@ -1,0 +1,12 @@
+{
+  "name": "web-challenges-productivity-tracker",
+  "version": "1.0.0",
+  "description": "> **Transform your web development skills through hands-on challenges!**",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
