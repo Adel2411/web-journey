@@ -1,4 +1,67 @@
-.timer {
-  background-color: red;
-  color: white;
+.timer{
+  background-color: 	#1b263b;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 270px;
+  border-radius: 20px;
+  box-shadow: 0px 0px 3px white;
+  transition: all 2s ease;
 }
+
+
+.timer h1, .timer p{
+  background-color: 	#1b263b;
+  color : white
+}
+
+.timer h1{
+  font-size: 3.1rem;
+  margin: 20px 0px;
+}
+
+.timer p{
+  font-size: 1.1rem;
+}
+
+.reset-button{
+  background-color: #1b263b;
+  color : white;
+  padding: 10px 100px;
+  font-size: 1.1rem;
+  margin : 30px 0px 10px 0px;
+  font-weight: 580;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: all .5s;
+}
+
+.reset-button:hover{
+  box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+  background-color: #2b3c5d;
+}
+
+.congrat-message {
+  font-size: 1rem;
+  margin : 20px 0px;
+  opacity: 0;
+  transform: scaleY(1);
+  animation: fadeGrow 0.4s ease-out forwards;
+  transform-origin: top;
+  transition: all 2s ease;
+}
+
+
+@keyframes fadeGrow {
+  from {
+    opacity: 0;
+    transform: scaleY(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
