@@ -1,4 +1,131 @@
-.notes-list {
-  background-color: black;
+.notes{
+  display: flex;
+  position: relative;
+  top : 50px;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: center;
   color: white;
+}
+
+
+.notes-list {
+  margin-right: 50px;
+  background-color: #1b263b;
+  box-shadow: 0px 0px 3px white;
+  padding: 10px 70px;
+  border-radius: 10px;
+}
+
+.notes-list h1{
+  background-color: #1b263b;
+  text-align: center;
+}
+
+.notes-list ul {
+  background-color: #1b263b;
+  margin-top: 20px;
+}
+
+.notes-list ul li{
+ background-color: #1b263b;
+  padding : 5px 8px;
+  margin: 10px 0px;
+}
+
+.note-form{
+  margin-left: 50px;
+  background-color: #1b263b;
+  padding: 10px 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 3px white;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+  height: 250px;
+  transition: all 0.5s ease;
+} 
+
+
+
+.note-form h1{
+  font-size: 1.3rem;
+  font-weight: 500;
+  background-color: #1b263b;
+}
+
+.note-text-input{
+  background-color: #1b263b;
+}
+
+.note-text-input input{
+  border-style: none;
+  outline-style: none;
+  background-color: #2b3c5d;
+  color:white;
+  width: 360px;
+  border: 1px solid white;
+  padding :15px 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+.note-from-btn{
+  background-color: #1b263b;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.clear-btn, .submit-btn{
+  background-color: #1b263b;
+  color : white;
+  width : 150px;
+  padding: 5px 0px;
+  border-radius: 5px;
+} 
+
+.clear-btn{
+  margin-left: 12px;
+  transition : all 0.5s;
+  cursor: pointer;
+}
+.clear-btn:hover{
+  box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+  background-color: #2b3c5d;
+}
+
+.submit-btn{
+  margin-right: 12px;
+  transition: all 0.5s;
+  cursor: pointer;
+}
+.submit-btn:hover{
+  box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+  background-color: #2b3c5d;
+}
+
+/* 1. Animate the .notes-list when the form appears */
+.notes-list {
+  transition: transform 0.5s ease;
+}
+
+.notes-list.shifted {
+  transform: translateX(-100px); /* adjust if needed */
+}
+
+
+/* 2. Animate the .note-form smoothly */
+.note-form {
+  transition: all 0.5s ease;
+  opacity: 0;
+  transform: translateX(50px);
+  pointer-events: none;
+}
+
+.note-form.visible {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
 }
