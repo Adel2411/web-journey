@@ -5,7 +5,7 @@ import { useState, useEffect , useRef } from "react";
 
 function Timer({ setShowNotesForm }) {
 
-  const [timeLeft, setTimeLeft] = useState(1500)
+  const [timeLeft, setTimeLeft] = useState(5)
   const timerRef = useRef(null)
   const [sessionCont, setSessionCont] = useState(0)
   const [showMessage, setShowMessage]  = useState(false)
@@ -63,7 +63,7 @@ function Timer({ setShowNotesForm }) {
 
     clearInterval(timerRef.current) // stop the previous timer
     timerRef.current = null;
-    setTimeLeft(1500)
+    setTimeLeft(5)
     startTimer()
   }
 
@@ -74,7 +74,8 @@ function Timer({ setShowNotesForm }) {
   const seconds = timeLeft % 60;
 
   return(
-    <div className="timer">
+    <>
+      <div className="timer">
       <h1>
         {String(minits).padStart(2, "0")} : {String(seconds).padStart(2, "0")}
       </h1>
@@ -87,15 +88,17 @@ function Timer({ setShowNotesForm }) {
         reset
       </button>
 
-      {showMessage &&
-         <div className="congrat-message">
-            <p>
-              🎉 Great job! You’ve completed {Math.floor( sessionCont / 2)} session!”
-            </p>
-          </div>
-      }
-
     </div>
+
+    
+    {showMessage &&
+       <div className="congrat-message">
+          <p>
+            🎉 Great job! You’ve completed {Math.floor( sessionCont / 2)} session!”
+          </p>
+        </div>
+    }
+    </>
   )
 
 }
