@@ -9,12 +9,66 @@ const prisma = new PrismaClient();
 //marche
 router.get("/", async(req, res)=>{
     try{
+        // celle si est la pagination 
+        const page = parseInt(req.query.page) || 1; 
+        const limit = parseInt(req.query.limit) || 10; 
+        const skip = (page - 1) * limit;
+
+        //ici si en veut rechercher qlq chose dans les notes
+        const search = req.query.search || "";
+
+        // ici le tri des notes 
+        let orderBy = { createdAt: "desc" }; 
+        
+        switch (req.query.sort) {
+            case "oldest":
+                orderBy = { createdAt: "asc" };
+                break;
+            case "title_asc":
+                orderBy = { title: "asc" };
+                break;
+            case "title_desc":
+                orderBy = { title: "desc" };
+                break;
+        }
+
+        let whereClause = {};
+
+        if (search) {
+            whereClause = {
+                OR: [
+                    {
+                        title: {
+                            contains: search,
+                            mode: "insensitive",
+                        },
+                    },
+                    {
+                        content: {
+                            contains: search,
+                            mode: "insensitive",
+                        },
+                    },
+                ],
+            };
+        }
+
+
+        const totalNotes = await prisma.note.count({where: whereClause});
+
         const notes = await prisma.note.findMany({
-            orderBy:{
-                createdAt:'desc',
-            }
+            where: whereClause,
+            orderBy,
+            skip,
+            take: limit,
         });
-        res.json(notes);
+        
+        res.json({
+            page,
+            totalPages: Math.ceil(totalNotes / limit),
+            totalNotes,
+            notes,
+        });
     }catch(error){
         console.error("Error fetching notes:", error);
         res.status(500).json({error:"Internal error!!!"});
@@ -51,6 +105,9 @@ router.get("/:id", async(req, res)=>{
                 id: parseInt(id),
             }
         })
+        if (!note){
+            res.status(404).json({error: "Note not found!!"});
+        }
         res.json(note);
     }catch(erro){
         console.error("Error getting note:", error);
