@@ -1,5 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
+import noteValidator from '../middlewares/validations.js';
+
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -20,7 +22,7 @@ router.get("/", async(req, res)=>{
 });
 
 //marcheeee 
-router.post("/", async(req, res)=>{
+router.post("/", noteValidator, async(req, res)=>{
     try{
         const {title, content, authorName, isPublic} = req.body;
 
@@ -57,7 +59,7 @@ router.get("/:id", async(req, res)=>{
 })
 
 //tester
-router.put("/:id", async(req, res)=>{
+router.put("/:id", noteValidator, async(req, res)=>{
     
     try{
 
