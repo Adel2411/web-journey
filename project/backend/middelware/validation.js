@@ -1,0 +1,71 @@
+import { body, validationResult } from 'express-validator';
+
+export const validator = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({
+            status: "Unprocessable Content",
+            errors: errors.array()
+        });
+    }
+    next();
+};
+
+export const createNoteValidator = [
+    body('title')
+        .exists()
+        .withMessage('Title is required')
+        .isString()
+        .withMessage('Title must be a string')
+        .isLength({ min: 3, max: 20 })
+        .withMessage('Title must be between 3 and 20 characters'),
+
+    body('content')
+        .exists()
+        .withMessage('Content is required')
+        .isString()
+        .withMessage('Content must be a string')
+        .isLength({ min: 3, max: 100 })
+        .withMessage('Content must be between 3 and 100 characters'),
+
+   
+    body('authorName')
+        .optional()
+        .isString()
+        .withMessage('AuthorName must be a string')
+        .isLength({ min: 3, max: 20 })
+        .withMessage('AuthorName must be between 3 and 20 characters'),
+
+    body('isPublic')
+        .optional()
+        .isBoolean()
+        .withMessage('isPublic must be a boolean')
+];
+
+export const updateValidator = [
+    body('title')
+        .optional()
+        .isString()
+        .withMessage('Title must be a string')
+        .isLength({ min: 3, max: 50 })
+        .withMessage('Title must be between 3 and 20 characters'),
+
+    body('content')
+        .optional()
+        .isString()
+        .withMessage('Content must be a string')
+        .isLength({ min: 3, max: 100 })
+        .withMessage('Content must be between 3 and 100 characters'),
+
+    body('authorName')
+        .optional()
+        .isString()
+        .withMessage('AuthorName must be a string')
+        .isLength({ min: 3, max: 20 })
+        .withMessage('AuthorName must be between 3 and 20 characters'),
+
+    body('isPublic')
+        .optional()
+        .isBoolean()
+        .withMessage('isPublic must be a boolean')
+];
