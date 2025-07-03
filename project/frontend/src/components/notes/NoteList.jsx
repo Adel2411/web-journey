@@ -12,14 +12,10 @@ export default function NoteList() {
   return (
     <div className="NoteList-container">
       <div className="NoteList-header">
-        <h1 className="NoteList-Title">Notes ({filteredNotes.length})</h1>
+        <h1 className="NoteList-title">Notes ({filteredNotes.length})</h1>
         <div className="filter-buttons">
-          <button onClick={() => setFilter('all')} className={`px-4 py-2 rounded ${filter === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
-            All Notes
-          </button>
-          <button onClick={() => setFilter('mine')} className={`px-4 py-2 rounded ${filter === 'mine' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
-            My Notes
-          </button>
+          <button onClick={() => setFilter('all')} className={filter === 'all' ? 'active-button' : 'inactive-button'}>All Notes</button>
+          <button onClick={() => setFilter('mine')} className={filter === 'mine' ? 'active-button' : 'inactive-button'}>My Notes</button>
         </div>
       </div>
       {filteredNotes.length === 0 ? (

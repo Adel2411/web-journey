@@ -1,0 +1,57 @@
+.NoteList-container {
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.NoteList-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.NoteList-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.active-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: #3b82f6; /* blue-500 */
+  color: white;
+}
+
+.inactive-button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: #e5e7eb; /* gray-200 */
+  color: black;
+}
+
+.text-no-note {
+  color: #6b7280; /* gray-500 */
+}
+
+.note-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .note-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .note-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
