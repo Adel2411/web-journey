@@ -1,0 +1,27 @@
+{
+  "name": "web-journey",
+  "version": "1.0.0",
+  "description": "> **Transform your web development skills through structured workshops and hands-on challenges!**",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/manel-nsr/web-journey.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/manel-nsr/web-journey/issues"
+  },
+  "homepage": "https://github.com/manel-nsr/web-journey#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
