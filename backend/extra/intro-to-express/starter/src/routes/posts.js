@@ -1,4 +1,3 @@
-
 import express from 'express';
 import {
   getAllPosts,
@@ -6,7 +5,7 @@ import {
   createPost,
   updatePost,
   deletePost
-} from '../controllers/postController.js';
+} from '../controllers/postsController.js';
 import validatePost from '../middleware/validation.js';
 import addTimestamp from '../middleware/timestamp.js';
 

@@ -1,4 +1,3 @@
-
 const logger = (req, res, next) => {
   const timestamp = new Date().toISOString();
   const method = req.method;
@@ -8,7 +7,7 @@ const logger = (req, res, next) => {
 
   console.log(`[${timestamp}] ${method} ${path} - Headers: ${JSON.stringify(headers)} - Body: ${JSON.stringify(body)}`);
   
-  next();
+  next(); // Continue to next middleware
 };
 
 export default logger;

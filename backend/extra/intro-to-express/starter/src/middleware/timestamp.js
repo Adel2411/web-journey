@@ -8,7 +8,7 @@ const addTimestamp = (req, res, next) => {
     req.body.updatedAt = now;
   }
 
-  next();
+  next(); 
 };
 
 export default addTimestamp;
