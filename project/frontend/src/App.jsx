@@ -1,9 +1,14 @@
-import "./App.css";
+import React from 'react';
+import Header from './components/layout/Header';
+import NoteList from './components/notes/NoteList';
 
 function App() {
   return (
-    <div className="h-screen flex items-center justify-center">
-      <h1 className="text-5xl font-semibold">Hello World!</h1>
+    <div className="bg-gray-50 min-h-screen">
+      <Header />
+      <main className="mt-4">
+        <NoteList />
+      </main>
     </div>
   );
 }
