@@ -8,7 +8,44 @@ const prisma = new PrismaClient();
 
 router.get("/", async (req, res)=> {
     try{
-        const notes = await prisma.note.findMany();
+        const {
+          page = '1',
+          limit = '10',
+          search = '',
+          sortBy = 'createdAt',
+          sortOrder = 'desc',
+       } = req.query;
+
+       let where = {};
+       if (search) {
+           where = {
+               OR: [
+                { title: { contains: search, mode: 'insensitive' } },
+                { content: { contains: search, mode: 'insensitive' } },
+                ],
+           };
+        }
+
+        let orderDirection = 'desc'; // default
+        if (sortOrder === 'asc') {
+           orderDirection = 'asc';
+        }
+
+
+        const notes = await prisma.note.findMany({
+
+            //pagination
+            skip: (Number(page) - 1) * Number(limit),
+            take: Number(limit),
+
+            //search
+            where,
+
+            //sorting
+            orderBy: {
+               [sortBy]: orderDirection,
+            },
+        });
 
         if(notes.length === 0 ){
             res.status(200).json({message : "No notes found"});
