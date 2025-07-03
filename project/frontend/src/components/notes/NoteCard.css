@@ -1,0 +1,67 @@
+.noteard-detail {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 24px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+  position: relative;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #99BC85;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.close-button:hover {
+  text-decoration: underline;
+}
+
+.noteard-detail h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  color: #2c3e50;
+}
+
+.noteard-detail p {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.note-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #888;
+  margin-top: 20px;
+}
+
+.public,
+.private {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+}
+
+.public {
+  background-color: #BBF7D0;
+  color: #166534;
+}
+
+.private {
+  background-color: #FED7AA; 
+  color: #9A3412
+}
