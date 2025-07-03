@@ -1,3 +1,63 @@
 .motivation {
-  background-color: #f0f0f0;
+  position: relative;
+  top: 120px;
+  text-align: center;
+  padding: 20px 15px;
+  border-radius: 50%;
+}
+
+/* BUTTON */
+.motivation-btn {
+  padding: 1rem 1.5rem;
+  border-radius: 50%;
+  border: 2px solid #3a5c9b;
+  background-color: #3a5c9b;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: box-shadow 0.4s ease, transform 0.3s ease;
+  outline: none;
+}
+
+.motivation-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px #3a5c9b;
+}
+
+/* LEVELS */
+.level-1 {
+  box-shadow: 0 0 6px #3a5c9b;
+}
+
+.level-2 {
+  box-shadow: 0 0 12px #3a5c9b;
+}
+
+.level-3 {
+  box-shadow: 0 0 18px #3a5c9b;
+}
+
+.level-4 {
+  box-shadow: 0 0 24px #3a5c9b;
+}
+
+.level-5 {
+  box-shadow: 0 0 30px #3a5c9b;
+  animation: pulse 1.2s infinite alternate;
+}
+
+/* ANIMATION */
+@keyframes pulse {
+  from {
+    transform: scale(1);
+    box-shadow: 0 0 30px #3a5c9b;
+  }
+}
+
+.motivation-msg{
+  background-color: #0d1b2a;
+  color : whitesmoke;
+  margin : 35px 0 50px 0; 
+  font-size: 1.3rem;
+
 }
