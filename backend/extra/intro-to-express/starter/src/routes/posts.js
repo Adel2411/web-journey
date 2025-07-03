@@ -1,7 +1,19 @@
 import express from "express";
-import logger from "../middleware/logger.js";
-import { getPosts } from "../controllers/postsController.js";
+import {
+  getPosts,
+  postPosts,
+  getPostById,
+  updatePost,
+  deletePost
+} from "../controllers/postsController.js";
+import { validateNewPost, createdAt, updatedAt } from "../middlewares.js";
 
-export const routes = express.Router();
+const router = express.Router();
 
-routes.get("/", logger, getPosts);
+router.get("/", getPosts);
+router.post("/", validateNewPost, createdAt, postPosts);
+router.get("/:id", getPostById);
+router.put("/:id", createdAt, updatedAt, updatePost);
+router.delete("/:id", deletePost);
+
+export default router;
