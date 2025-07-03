@@ -32,10 +32,17 @@ router.post("/",async(req, res)=>{
     try{
        const {title, content, authorName, isPublic } = req.body 
 
-       if(!title || !content){
+       if(!title || typeof title !== "string" || title.trim().length < 3 || title.trim().length > 100){
+        return res.status(400).json({
+            success : false,
+            message: "Title must be a non-empty string between 3 and 100 characters"
+        })
+       }
+
+       if(!content || typeof content !== "string"  || content.trim().length < 5 || content.trim().length > 500){
         return res.status(400).json({
             success: false,
-            message: "Title and content are required"
+            message : "Content is required and must be between 10 and 1000 characters"
         })
        }
 
@@ -105,6 +112,20 @@ router.put("/:id", async (req, res)=> {
             })
         }
 
+        if(!title || typeof title !== "string" || title.trim().length < 3 || title.trim().length > 100){
+        return res.status(400).json({
+            success : false,
+            message: "Title must be a non-empty string between 3 and 100 characters"
+        })
+       }
+
+       if(!content || typeof content !== "string"  || content.trim().length < 5 || content.trim().length > 500){
+        return res.status(400).json({
+            success: false,
+            message : "Content is required and must be between 10 and 1000 characters"
+        })
+       }
+
         const updatedNote = await prisma.note.update({
            where: { id }, 
             data: {
@@ -130,7 +151,7 @@ router.put("/:id", async (req, res)=> {
 
 router.delete("/:id", async (req, res) => {
   try {
-    
+
     const id = parseInt(req.params.id);
 
     const note = await prisma.note.findUnique({
