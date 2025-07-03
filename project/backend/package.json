@@ -2,10 +2,12 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "dev": "node --watch src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev" :"nodemon src/app.js",
+    "generate": "prisma generate",
+  "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -17,5 +19,8 @@
     "dotenv": "^17.0.0",
     "express": "^5.1.0",
     "prisma": "^6.10.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
