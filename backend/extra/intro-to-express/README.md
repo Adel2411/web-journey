@@ -276,7 +276,7 @@ git commit -m "Complete Mini Blog API Challenge"
 3. 🔄 Push your solution to your forked repository:
 
 ```bash
-git push origin main
+git push origin YOURUSERNAME/backend-challenge-01 #or whatever branch you created
 ```
 
 4. 📤 Create a Pull Request to the original repository

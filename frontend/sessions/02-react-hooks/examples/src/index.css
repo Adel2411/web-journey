@@ -1,0 +1,272 @@
+@import "tailwindcss";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Additional styles for components */
+.demo-description {
+  margin-bottom: 1.5rem;
+  color: #666;
+}
+
+.counter-display {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1rem;
+  color: var(--color-blue);
+}
+
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.logs-container {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-top: 1rem;
+}
+
+.log-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.log-entry {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+  font-family: monospace;
+  font-size: 0.9rem;
+}
+
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+.no-logs, .no-todos {
+  text-align: center;
+  color: #999;
+  padding: 1.5rem;
+  font-style: italic;
+}
+
+.concept-grid, .patterns-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.concept-item, .pattern-item {
+  background-color: #f8fafc;
+  border-radius: var(--radius);
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+}
+
+.concept-icon, .pattern-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.concept-title, .pattern-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.concept-code, .pattern-code {
+  display: block;
+  background-color: #f1f5f9;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin: 0.5rem 0;
+  font-size: 0.85rem;
+}
+
+.name-display {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f0fff4;
+  border-radius: var(--radius);
+  text-align: center;
+  font-size: 1.25rem;
+}
+
+.todo-input-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.todo-list {
+  list-style: none;
+}
+
+.todo-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.todo-remove {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  font-size: 1.25rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.practices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.practice-column {
+  background-color: #f8fafc;
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.practice-column.good {
+  border-left: 3px solid var(--color-green);
+}
+
+.practice-column.bad {
+  border-left: 3px solid #e74c3c;
+}
+
+.practice-column h4 {
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.practice-column ul {
+  list-style: none;
+}
+
+.practice-column li {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.size-display {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: var(--color-green);
+}
+
+.device-type {
+  text-align: center;
+  font-weight: 500;
+  color: var(--color-green);
+}
+
+.timer-display {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 1rem 0;
+  color: var(--color-purple);
+}
+
+.posts-container {
+  margin-top: 1rem;
+}
+
+.post-item {
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: 0.75rem;
+}
+
+.post-item h4 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.demo-note {
+  text-align: center;
+  background-color: #f8fafc;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.demo-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+/* Additional styles for code blocks */
+.code-block {
+  display: block;
+  background-color: #f1f5f9;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: #334155;
+  white-space: nowrap;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+}
+
+/* Consistent patterns grid */
+.patterns-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.pattern-item {
+  background-color: #f8fafc;
+  border-radius: var(--radius);
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+}
+
+.pattern-item h4 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-blue);
+}
+
+@media (max-width: 768px) {
+  .concept-grid, .patterns-grid, .practices-grid {
+    grid-template-columns: 1fr;
+  }
+}
