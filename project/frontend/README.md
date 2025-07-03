@@ -1,12 +1,13 @@
-# React + Vite
+# CollabNote 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ce projet est une interface React simple permettant d'afficher une liste de notes. L'utilisateur peut filtrer les notes (toutes / les miennes) et cliquer sur une note pour voir son contenu complet.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠️ Fonctionnalités
 
-## Expanding the ESLint configuration
+- Affichage d'une liste de notes.
+- Filtrage : "Toutes les notes" ou "Mes notes" (auteur = "John Doe").
+- Afficher tout la note lors du clique dans une carte.
+- Bouton pour revenir à la liste.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
