@@ -32,18 +32,14 @@ export const createNoteValidator = [
     body('authorName')
         .optional()
         .isString()
-        .withMessage('Author must be a string')
+        .withMessage('AuthorName must be a string')
         .isLength({ min: 3, max: 20 })
         .withMessage('AuthorName must be between 3 and 20 characters'),
 
     body('isPublic')
         .optional()
         .isBoolean()
-        .withMessage('Author must be a string')
-        .isLength({ min: 3, max: 20 })
-        .withMessage('Author must be between 3 and 20 characters')
-
-
+        .withMessage('isPublic must be a boolean')
 ];
 
 export const updateValidator = [
@@ -64,16 +60,12 @@ export const updateValidator = [
     body('authorName')
         .optional()
         .isString()
-        .withMessage('Author must be a string')
+        .withMessage('AuthorName must be a string')
         .isLength({ min: 3, max: 20 })
         .withMessage('AuthorName must be between 3 and 20 characters'),
 
     body('isPublic')
         .optional()
         .isBoolean()
-        .withMessage('Author must be a string')
-        .isLength({ min: 3, max: 20 })
-        .withMessage('Author must be between 3 and 20 characters')
-
-
+        .withMessage('isPublic must be a boolean')
 ];

@@ -1,10 +1,12 @@
 import express from 'express';
 
 const router = express.Router();
-import { getNotes,postNotes } from '../controller/NoteController.js';
-import { createNoteValidator } from '../middelware/validation.js';
+import { getNotes,postNotes ,getNoteById,editNote,deleteNote} from '../controller/NoteController.js';
+import { createNoteValidator ,updateValidator } from '../middelware/validation.js';
 
 router.get('/',getNotes);
-router.post('/add',createNoteValidator,postNotes);
-
+router.post('/',createNoteValidator,postNotes);
+router.get("/:id",getNoteById);
+router.put("/:id",updateValidator,editNote);
+router.delete("/:id",deleteNote);
 export default router;
