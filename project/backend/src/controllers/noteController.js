@@ -14,6 +14,16 @@ const formatNote = (note) => ({
 });
 
 // GET /notes
+// Query Parameters:
+// - search (string, optional): Filters notes where the title or content includes this string (case-insensitive).
+// - page (number, optional, default = 1): Specifies the page number for pagination.
+// - limit (number, optional, default = 10): Specifies how many notes to return per page.
+// - sort (string, optional, default = "newest"): Controls sorting.
+//     Options:
+//       - "newest": Sort by creation date (newest first).
+//       - "oldest": Sort by creation date (oldest first).
+//       - "az": Sort by title alphabetically A–Z.
+//       - "za": Sort by title alphabetically Z–A.
 const getAllNotes = async (req, res) => {
   try {
     const { search = "", page = 1, limit = 10, sort = "newest" } = req.query;
