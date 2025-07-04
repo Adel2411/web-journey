@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
+import { handleError } from "../utils/errors.js";
 // Utility to format a note
 const formatNote = (note) => ({
   id: note.id,
@@ -11,24 +12,6 @@ const formatNote = (note) => ({
   createdAt: note.createdAt,
   updatedAt: note.updatedAt,
 });
-
-// Centralized error handler
-const handleError = (res, err, context = "Internal server error") => {
-  console.error(`[Error] ${context}:`, err);
-
-  if (err.code === "P1001") {
-    return res.status(503).json({
-      success: false,
-      error: "Database is unreachable. Please try again later.",
-    });
-  }
-
-  return res.status(500).json({
-    success: false,
-    error: context,
-    details: process.env.NODE_ENV === "development" ? err.message : undefined,
-  });
-};
 
 // GET /notes
 const getAllNotes = async (req, res) => {

@@ -14,3 +14,5 @@ const handleError = (res, err, context = "Internal server error") => {
     details: process.env.NODE_ENV === "development" ? err.message : undefined,
   });
 };
+
+export { handleError };
