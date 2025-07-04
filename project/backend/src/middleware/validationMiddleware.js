@@ -46,40 +46,32 @@ const validateNoteData = (req, res, next) => {
     }
   }
 
-  // Optional: Validate length constraints if fields are present
+  // Validate length constraints if fields are present
   if (title !== undefined) {
     const trimmedTitle = title.trim();
     if (trimmedTitle.length < MIN_TITLE_LENGTH) {
-      return res
-        .status(400)
-        .json({
-          error: `Title must be at least ${MIN_TITLE_LENGTH} characters.`,
-        });
+      return res.status(400).json({
+        error: `Title must be at least ${MIN_TITLE_LENGTH} characters.`,
+      });
     }
     if (trimmedTitle.length > MAX_TITLE_LENGTH) {
-      return res
-        .status(400)
-        .json({
-          error: `Title must be less than ${MAX_TITLE_LENGTH} characters.`,
-        });
+      return res.status(400).json({
+        error: `Title must be less than ${MAX_TITLE_LENGTH} characters.`,
+      });
     }
   }
 
   if (content !== undefined) {
     const trimmedContent = content.trim();
     if (trimmedContent.length < MIN_CONTENT_LENGTH) {
-      return res
-        .status(400)
-        .json({
-          error: `Content must be at least ${MIN_CONTENT_LENGTH} characters.`,
-        });
+      return res.status(400).json({
+        error: `Content must be at least ${MIN_CONTENT_LENGTH} characters.`,
+      });
     }
     if (trimmedContent.length > MAX_CONTENT_LENGTH) {
-      return res
-        .status(400)
-        .json({
-          error: `Content must be less than ${MAX_CONTENT_LENGTH} characters.`,
-        });
+      return res.status(400).json({
+        error: `Content must be less than ${MAX_CONTENT_LENGTH} characters.`,
+      });
     }
   }
 
