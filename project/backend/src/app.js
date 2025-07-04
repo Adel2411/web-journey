@@ -16,10 +16,9 @@ let isDbConnected = true;
 prisma
   .$connect()
   .then(() => {
-    console.log("Connected to database");
+    isDbConnected = true;
   })
   .catch((err) => {
-    console.error("Database connection failed:", err.message);
     isDbConnected = false;
   });
 
