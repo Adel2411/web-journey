@@ -10,6 +10,16 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model Note {
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  authorName String?
+  isPublic   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
