@@ -15,14 +15,63 @@ const formatNote = (note) => ({
 // Get all notes
 const getAllNotes = async (req, res) => {
   try {
-    const notes = await prisma.note.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-    if (!notes || notes.length === 0) {
+    const { search = "", page = 1, limit = 10, sort = "newest" } = req.query;
+
+    const take = parseInt(limit);
+    const skip = (parseInt(page) - 1) * take;
+
+    // Build filtering condition
+    const where = search.trim()
+      ? {
+          OR: [
+            { title: { contains: search, mode: "insensitive" } },
+            { content: { contains: search, mode: "insensitive" } },
+          ],
+        }
+      : {};
+
+    // Sorting logic
+    let orderBy;
+    switch (sort) {
+      case "oldest":
+        orderBy = { createdAt: "asc" };
+        break;
+      case "az":
+        orderBy = { title: "asc" };
+        break;
+      case "za":
+        orderBy = { title: "desc" };
+        break;
+      case "newest":
+      default:
+        orderBy = { createdAt: "desc" };
+    }
+
+    const [notes, totalCount] = await Promise.all([
+      prisma.note.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+      }),
+      prisma.note.count({ where }),
+    ]);
+
+    if (!notes.length) {
       return res.status(404).json({ error: "No notes found." });
     }
-    res.json({ notes: notes.map(formatNote) });
+
+    res.json({
+      notes: notes.map(formatNote),
+      pagination: {
+        page: parseInt(page),
+        limit: take,
+        totalPages: Math.ceil(totalCount / take),
+        totalCount,
+      },
+    });
   } catch (err) {
+    console.error("Get all notes error:", err);
     res.status(500).json({ error: "Failed to retrieve notes." });
   }
 };
