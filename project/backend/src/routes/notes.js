@@ -33,3 +33,22 @@ router.post("/", async (req, res) => {
 
   res.status(201).json(note);
 });
+
+
+
+// Update a note
+router.put("/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { title, content, authorName, isPublic } = req.body;
+
+  try {
+    const updated = await prisma.note.update({
+      where: { id },
+      data: { title, content, authorName, isPublic },
+    });
+    res.json(updated);
+  } catch {
+    res.status(404).json({ error: "Note not found" });
+  }
+});
+
