@@ -17,8 +17,6 @@ Retrieve a list of notes with optional search, pagination, and sorting.
   - `"az"` – Sort by title A–Z
   - `"za"` – Sort by title Z–A
 
-**Validation:** No strict validation, but server enforces type conversion and fallback defaults.
-
 ---
 
 ### 📄 GET `/api/notes/:id`

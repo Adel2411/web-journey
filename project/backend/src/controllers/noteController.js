@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import { prisma } from "../app.js";
 
 import { handleError } from "../utils/errors.js";
 // Utility to format a note
