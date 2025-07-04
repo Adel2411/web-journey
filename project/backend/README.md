@@ -7,6 +7,7 @@ Features :
 - CORS-enabled for frontend
 - Environment variable support
 
+
 Endpoints :
 
 | Method | Route            | Description        |
