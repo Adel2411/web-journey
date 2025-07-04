@@ -52,3 +52,15 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// Delete a note
+router.delete("/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  try {
+    await prisma.note.delete({ where: { id } });
+    res.json({ message: "Note deleted successfully" });
+  } catch {
+    res.status(404).json({ error: "Note not found" });
+  }
+});
+
+export default router;
