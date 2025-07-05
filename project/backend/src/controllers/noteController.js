@@ -1,60 +1,21 @@
-import { prisma } from "../app.js";
-
 import { handleError } from "../utils/errors.js";
-// Utility to format a note
-const formatNote = (note) => ({
-  id: note.id,
-  title: note.title,
-  content: note.content,
-  authorName: note.authorName,
-  isPublic: note.isPublic,
-  createdAt: note.createdAt,
-  updatedAt: note.updatedAt,
-});
+import * as noteService from "../services/noteService.js";
 
 // GET /notes
-
 const getAllNotes = async (req, res) => {
   try {
     const { search = "", page = 1, limit = 10, sort = "newest" } = req.query;
-
-    const take = parseInt(limit);
-    const skip = (parseInt(page) - 1) * take;
-
-    const where = search.trim()
-      ? {
-          OR: [
-            { title: { contains: search, mode: "insensitive" } },
-            { content: { contains: search, mode: "insensitive" } },
-          ],
-        }
-      : {};
-
-    const orderBy = {
-      newest: { createdAt: "desc" },
-      oldest: { createdAt: "asc" },
-      az: { title: "asc" },
-      za: { title: "desc" },
-    }[sort] || { createdAt: "desc" };
-
-    const [notes, totalCount] = await Promise.all([
-      prisma.note.findMany({ where, orderBy, skip, take }),
-      prisma.note.count({ where }),
-    ]);
-
-    if (!notes.length) {
+    
+    const result = await noteService.getAllNotes(search, page, limit, sort);
+    
+    if (!result.notes.length) {
       return res.status(404).json({ success: false, error: "No notes found." });
     }
 
     return res.json({
       success: true,
-      notes: notes.map(formatNote),
-      pagination: {
-        page: parseInt(page),
-        limit: take,
-        totalPages: Math.ceil(totalCount / take),
-        totalCount,
-      },
+      notes: result.notes,
+      pagination: result.pagination
     });
   } catch (err) {
     handleError(res, err, "Failed to retrieve notes");
@@ -64,15 +25,13 @@ const getAllNotes = async (req, res) => {
 // GET /notes/:id
 const getNoteById = async (req, res) => {
   try {
-    const note = await prisma.note.findUnique({
-      where: { id: req.noteId },
-    });
+    const note = await noteService.getNoteById(req.noteId);
 
     if (!note) {
       return res.status(404).json({ success: false, error: "Note not found." });
     }
 
-    return res.json({ success: true, note: formatNote(note) });
+    return res.json({ success: true, note });
   } catch (err) {
     handleError(res, err, "Failed to retrieve note");
   }
@@ -81,18 +40,11 @@ const getNoteById = async (req, res) => {
 // POST /notes
 const createNote = async (req, res) => {
   try {
-    const newNote = await prisma.note.create({
-      data: {
-        title: req.validatedNote.title,
-        content: req.validatedNote.content,
-        authorName: req.validatedNote.authorName,
-        isPublic: req.validatedNote.isPublic ?? true,
-      },
-    });
+    const newNote = await noteService.createNote(req.validatedNote);
 
     return res.status(201).json({
       success: true,
-      note: formatNote(newNote),
+      note: newNote,
     });
   } catch (err) {
     handleError(res, err, "Failed to create note");
@@ -101,30 +53,16 @@ const createNote = async (req, res) => {
 
 // PUT /notes/:id
 const updateNote = async (req, res) => {
-  const id = req.noteId;
-  const { title, content, authorName, isPublic } = req.validatedNote;
-
   try {
-    const existingNote = await prisma.note.findUnique({ where: { id } });
+    const updatedNote = await noteService.updateNote(req.noteId, req.validatedNote);
 
-    if (!existingNote) {
+    if (!updatedNote) {
       return res.status(404).json({ success: false, error: "Note not found." });
     }
 
-    const updatedNote = await prisma.note.update({
-      where: { id },
-      data: {
-        title,
-        content,
-        authorName,
-        isPublic,
-        updatedAt: new Date(),
-      },
-    });
-
     return res.status(200).json({
       success: true,
-      note: formatNote(updatedNote),
+      note: updatedNote,
     });
   } catch (err) {
     handleError(res, err, "Failed to update note");
@@ -134,17 +72,11 @@ const updateNote = async (req, res) => {
 // DELETE /notes/:id
 const deleteNote = async (req, res) => {
   try {
-    const note = await prisma.note.findUnique({
-      where: { id: req.noteId },
-    });
+    const deleted = await noteService.deleteNote(req.noteId);
 
-    if (!note) {
+    if (!deleted) {
       return res.status(404).json({ success: false, error: "Note not found." });
     }
-
-    await prisma.note.delete({
-      where: { id: req.noteId },
-    });
 
     return res.json({
       success: true,
@@ -161,5 +93,4 @@ export {
   createNote,
   updateNote,
   deleteNote,
-  formatNote,
 };
