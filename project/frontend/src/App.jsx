@@ -1,9 +1,12 @@
 import "./App.css";
+import NotesList from "./components/notes/NoteList";
+import Header from "./components/layout/Header";
 
 function App() {
   return (
     <div>
-      <h1>Hello World!</h1>
+      <Header />
+      <NotesList />
     </div>
   );
 }
