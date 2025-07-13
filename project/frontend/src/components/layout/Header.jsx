@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
 
-const Header = () => {
+const Header = ({ search, setSearch }) => {
   return (
     <header className="w-full bg-white shadow-lg shadow-gray-300 py-5 px-6">
 
@@ -18,6 +18,8 @@ const Header = () => {
             type="text"
             placeholder="Search notes..."
             className="bg-transparent outline-none text-sm flex-1 text-gray-700 placeholder-gray-500"
+            value={search}
+            onChange={(e)=>{setSearch(e.target.value)}}
           />
         </div>
 

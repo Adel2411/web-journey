@@ -2,7 +2,7 @@ const NoteItem = ({ note }) => {
   return (
     <div
       className={`flex flex-col justify-between p-6 rounded-xl shadow-md transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-xl ${
-      note.isPublic ? "bg-blue-100" : "bg-purple-100"
+      note.isPublic ? "bg-purple-100" :"bg-blue-100" 
       } h-full min-h-[240px] w-full`}
     >
 

@@ -2,14 +2,16 @@ import { sampleNotes } from "../../data/sampleNotes";
 import { useState } from "react";
 import NoteItem from "./NoteItem";
 
-const NotesList = () => {
+const NotesList = ({ search }) => {
   const [viewNotes, setViewNotes] = useState("all");
   const currentUser = "John Doe";
 
-  const filteredNotes =
-    viewNotes === "all"
-      ? sampleNotes
-      : sampleNotes.filter((note) => note.authorName === currentUser);
+  const filteredNotes = sampleNotes
+    .filter((note) => viewNotes === "all" || note.authorName === currentUser)
+    .filter((note) =>
+      note.title.toLowerCase().includes(search.toLowerCase()) ||
+      note.content.toLowerCase().includes(search.toLowerCase())
+    );
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
