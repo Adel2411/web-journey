@@ -1,44 +1,44 @@
-const posts = require('../data/posts');
+import posts from"../data/posts.js";
 
 // get all the posts
-exports.getAllPosts = (req, res) => {
+export function getAllPosts (req, res)  {
   res.status(200).json(posts);
-};
+}
 
 // get a post by its ID
-exports.getPostsByID = (req,res) =>{
+export function getPostsByID (req,res) {
   const post = posts.find(p=>p.id ===parseInt(req.params.id));
   if (!post) return res.status(404).json({message:'post not found'});
   res.status(200).json(post);
-};
+}
 
 // create a new post
-exports.createPost = (req,res) =>{
+export function createPost  (req,res) {
 const{title,content} = req.body;
 const newpost = {
-  id : post.lenght + 1 ,
+  id : posts.length + 1 ,
   title,
   content 
-};
+}
 posts.push(newpost);
 res.status(201).json(newpost);
-};
+}
 
 // update a post
-exports.updatepost = (req,res) => {
+export function updatepost  (req,res)  {
 const post = posts.find(p=>p.id ===parseInt(req.params.id));
 if (!post) return res.status(404).json({message:'post not found'});
 const{title,content} = req.body;
 post.title = title || post.title;
 post.content = content || post.content;
 res.status(200).json(post);
-};
+}
 
 // delete a post
-exports.deletepost = (req,res) => {
+export function deletepost  (req,res) {
   const post = posts.find(p=>p.id ===parseInt(req.params.id));
   if(!post) return res.status(404).json({message: 'post not found'});
   const index = posts.indexOf(post);
   posts.splice(index,1);
   res.status(200).json({message: 'post deleted'});
-};
+}
