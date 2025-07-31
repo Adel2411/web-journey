@@ -6,14 +6,14 @@ exports.getAllPosts = (req, res) => {
 };
 
 // get a post by its ID
-exports.getPostsbyID = (req,res) =>{
+exports.getPostsByID = (req,res) =>{
   const post = posts.find(p=>p.id ===parseInt(req.params.id));
   if (!post) return res.status(404).json({message:'post not found'});
   res.status(200).json(post);
 };
 
 // create a new post
-exports.createpost = (req,res) =>{
+exports.createPost = (req,res) =>{
 const{title,content} = req.body;
 const newpost = {
   id : post.lenght + 1 ,
