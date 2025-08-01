@@ -1,8 +1,9 @@
-// src/app.js - Updated for CollabNote
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import notesRouter from "./routes/notes.js";
+import { errorHandler } from "./utils/errorHandler.js";
+import { prisma } from "./utils/prisma.js";
 
 dotenv.config();
 
@@ -10,27 +11,35 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 // Middleware
-app.use(
-  cors({
-    origin: "http://localhost:5173", // Vite frontend URL
-    credentials: true,
-  }),
-);
+app.use(cors({
+  origin: "http://localhost:5173", // Vite frontend URL
+  credentials: true,
+}));
 app.use(express.json());
 
-// Routes
+// Test route
 app.get("/", (_, res) => {
   res.json({ message: "CollabNote API is running!" });
 });
 
+// Notes routes
 app.use("/api/notes", notesRouter);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: "Something went wrong!" });
-});
+// Global error handler
+app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`CollabNote API server is running on http://localhost:${PORT}`);
-});
+// Start server with DB connection
+const startServer = async () => {
+  try {
+    await prisma.$connect();
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running at http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error("❌ Failed to connect to the database");
+    console.error(error);
+    process.exit(1);
+  }
+};
+
+startServer();
