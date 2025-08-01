@@ -1,5 +1,50 @@
-import posts from "../data/posts.js";
+import posts from"../data/posts.js";
 
-export const getPosts = (req, res) => {
-  res.json(posts);
-};
+// get all the posts / filtered posts 
+export function getAllPosts (req, res)  {
+  const {author} = req.query;
+  if (author) {
+    const filteredposts = posts.filter(p => p.author && p.author.toLowerCase() === author.toLowerCase());
+    if (filteredposts.length === 0) return res.status(404).json({message :'not found'});
+    return res.status(200).json(filteredposts);
+  }
+  res.status(200).json(posts);
+}
+
+// get a post by its ID
+export function getPostsByID (req,res) {
+  const post = posts.find(p=>p.id ===parseInt(req.params.id));
+  if (!post) return res.status(404).json({message:'post not found'});
+  res.status(200).json(post);
+}
+
+// create a new post
+export function createPost  (req,res) {
+const{title,content} = req.body;
+const newpost = {
+  id : posts.length + 1 ,
+  title,
+  content 
+}
+posts.push(newpost);
+res.status(201).json(newpost);
+}
+
+// update a post
+export function updatepost  (req,res)  {
+const post = posts.find(p=>p.id ===parseInt(req.params.id));
+if (!post) return res.status(404).json({message:'post not found'});
+const{title,content} = req.body;
+post.title = title || post.title;
+post.content = content || post.content;
+res.status(200).json(post);
+}
+
+// delete a post
+export function deletepost  (req,res) {
+  const post = posts.find(p=>p.id ===parseInt(req.params.id));
+  if(!post) return res.status(404).json({message: 'post not found'});
+  const index = posts.indexOf(post);
+  posts.splice(index,1);
+  res.status(200).json({message: 'post deleted'});
+}
