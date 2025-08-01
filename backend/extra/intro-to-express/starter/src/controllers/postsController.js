@@ -1,7 +1,13 @@
 import posts from"../data/posts.js";
 
-// get all the posts
+// get all the posts / filtered posts 
 export function getAllPosts (req, res)  {
+  const {author} = req.query;
+  if (author) {
+    const filteredposts = posts.filter(p => p.author && p.author.toLowerCase() === author.toLowerCase());
+    if (filteredposts.length === 0) return res.status(404).json({message :'not found'});
+    return res.status(200).json(filteredposts);
+  }
   res.status(200).json(posts);
 }
 
