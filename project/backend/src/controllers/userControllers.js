@@ -45,6 +45,7 @@ const registerUser = async (req, res) => {
 			.json({ err: false, msg: "User created successfully", user, token });
 	} catch (e) {
 		console.log(e);
+		return res.status(500).json({ err: true, msg: "Internal server error" });
 	}
 };
 
@@ -60,14 +61,21 @@ const login = async (req, res) => {
 			});
 		}
 
-		const salt = bcrypt.genSaltSync(10);
-		const hashedPass = bcrypt.hashSync(password, salt);
+		const isMatch = bcrypt.compareSync(password, user.password);
 
-		return res
-			.status(201)
-			.json({ err: false, msg: "User logged successfully", user });
+		if (isMatch) {
+			const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+				expiresIn: "1d",
+			});
+
+			return res
+				.status(201)
+				.json({ err: false, msg: "Login successful", user, token });
+		}
+		return res.status(400).json({ err: true, msg: "Invalid credentials" });
 	} catch (e) {
 		console.log(e);
+		return res.status(500).json({ err: true, msg: "Internal server error" });
 	}
 };
 
