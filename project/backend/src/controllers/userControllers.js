@@ -32,7 +32,7 @@ const registerUser = async (req, res) => {
 
 		const salt = bcrypt.genSaltSync(10);
 		const hashedPass = bcrypt.hashSync(password, salt);
-		const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+		const token = jwt.sign({ id: user.id, email }, process.env.JWT_SECRET, {
 			expiresIn: "1d",
 		});
 
@@ -64,7 +64,7 @@ const login = async (req, res) => {
 		const isMatch = bcrypt.compareSync(password, user.password);
 
 		if (isMatch) {
-			const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+			const token = jwt.sign({ id: user.id, email }, process.env.JWT_SECRET, {
 				expiresIn: "1d",
 			});
 
