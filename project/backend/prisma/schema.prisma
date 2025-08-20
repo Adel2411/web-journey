@@ -19,9 +19,24 @@ model Note {
   id         Int      @id @default(autoincrement())
   title      String   @db.VarChar(100)  
   content    String   @db.VarChar(1000) 
-  authorName String   @default("Unknown") @db.VarChar(100) 
   isPublic   Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  userId    Int
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model User {
+  id        Int @id @default(autoincrement())
+  email     String @unique
+  password  String
+  name      String
+  age       Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notes     Note[]   
+}
+
 
