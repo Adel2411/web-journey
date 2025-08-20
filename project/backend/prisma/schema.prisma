@@ -11,21 +11,21 @@ model Note {
   id         Int      @id @default(autoincrement())
   title      String   @db.VarChar(100)
   content    String   @db.VarChar(1000)
-  authorName String   @default("Unknown") @db.VarChar(100)
   isPublic   Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
   userId     Int
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
   id        Int      @id @default(autoincrement())
-  email     String   @unique @db.VarChar(50)
-  password  String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(100)
+  password  String   @db.VarChar(255)
   name      String   @db.VarChar(100)
   age       Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  notes     Note[]
+  notes     Note[]  
 }
