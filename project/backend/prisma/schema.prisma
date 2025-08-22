@@ -5,9 +5,11 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "windows", "debian-openssl-3.0.x"]
   output   = "../src/generated/prisma"
 }
+
 
 datasource db {
   provider = "postgresql"
@@ -24,19 +26,20 @@ model Note {
   updatedAt  DateTime @updatedAt
 
   userId    Int
-  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User @relation("UserNotes", fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id        Int @id @default(autoincrement())
-  email     String @unique
-  password  String
-  name      String
+  id        Int @id  @default(autoincrement())
+  email     String   @unique @db.VarChar(100)
+  password  String   @db.VarChar(255)
+  name      String   @db.VarChar(100)
   age       Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  notes     Note[]   
+  notes     Note[]   @relation("UserNotes")
 }
+
 
 
