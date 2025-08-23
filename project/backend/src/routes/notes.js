@@ -11,8 +11,13 @@ import {
   updateNoteValidator,
   validateNoteId,
 } from "../utils/noteValidator.js";
+//  NEW: import your auth middleware
+import { authenticate } from "../middleware/auth.js";
 
 const router = express.Router();
+
+//  Apply authentication to ALL note routes
+router.use(authenticate);
 
 router.get("/", getNotes);
 router.get("/:id", validateNoteId, getNoteById);

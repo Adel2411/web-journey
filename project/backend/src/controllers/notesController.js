@@ -17,8 +17,10 @@ export async function getNotes(req, res, next) {
         ? { title: "desc" }
         : { createdAt: "desc" };
 
+    //   Filter notes by the logged-in user
     const notes = await prisma.note.findMany({
       where: {
+        userId: req.user.id, // only notes owned by this user
         OR: [
           { title: { contains: search, mode: "insensitive" } },
           { content: { contains: search, mode: "insensitive" } },
@@ -42,6 +44,12 @@ export async function getNoteById(req, res, next) {
     const note = await prisma.note.findUnique({ where: { id: Number(id) } });
 
     if (!note) throw httpError("Note not found", 404, "NOT_FOUND");
+
+    //   Ownership check
+    if (note.userId !== req.user.id) {
+      throw httpError("Not authorized", 403, "FORBIDDEN");
+    }
+
     res.json(formatNote(note));
   } catch (err) {
     next(err);
@@ -51,10 +59,18 @@ export async function getNoteById(req, res, next) {
 // POST /api/notes
 export async function createNote(req, res, next) {
   try {
-    const { title, content, author, isPublic } = req.body;
+    const { title, content, isPublic } = req.body;
+
+    //   Remove "author" field, link note to authenticated user
     const note = await prisma.note.create({
-      data: { title, content, author, isPublic },
+      data: {
+        title,
+        content,
+        isPublic,
+        userId: req.user.id,
+      },
     });
+
     res.status(201).json(formatNote(note));
   } catch (err) {
     next(err);
@@ -65,10 +81,20 @@ export async function createNote(req, res, next) {
 export async function updateNote(req, res, next) {
   try {
     const { id } = req.params;
+
+    const existingNote = await prisma.note.findUnique({ where: { id: Number(id) } });
+    if (!existingNote) throw httpError("Note not found", 404, "NOT_FOUND");
+
+    //   Ownership check
+    if (existingNote.userId !== req.user.id) {
+        throw httpError("Note not found", 404, "NOT_FOUND"); 
+    }
+
     const note = await prisma.note.update({
       where: { id: Number(id) },
       data: req.body,
     });
+
     res.json(formatNote(note));
   } catch (err) {
     next(err);
@@ -79,6 +105,15 @@ export async function updateNote(req, res, next) {
 export async function deleteNote(req, res, next) {
   try {
     const { id } = req.params;
+
+    const existingNote = await prisma.note.findUnique({ where: { id: Number(id) } });
+    if (!existingNote) throw httpError("Note not found", 404, "NOT_FOUND");
+
+    //   Ownership check
+    if (existingNote.userId !== req.user.id) {
+throw httpError("Note not found", 404, "NOT_FOUND"); 
+    }
+
     await prisma.note.delete({ where: { id: Number(id) } });
     res.json({ success: true, message: "Note deleted" });
   } catch (err) {

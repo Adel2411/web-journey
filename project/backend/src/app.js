@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import notesRouter from "./routes/notes.js";
+import authRouter from "./routes/auth.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import { prisma } from "./utils/prisma.js";
 
@@ -24,6 +25,10 @@ app.get("/", (_, res) => {
 
 // Notes routes
 app.use("/api/notes", notesRouter);
+
+//Auth routes
+
+app.use("/api/auth", authRouter);
 
 // Global error handler
 app.use(errorHandler);

@@ -7,12 +7,27 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique @db.VarChar(100)
+  password  String   @db.VarChar(255)
+  name      String   @db.VarChar(100)
+  age       Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notes     Note[]   @relation("UserNotes")
+}
+
 model Note {
   id         Int      @id @default(autoincrement())
   title      String
   content    String
-  authorName String
   isPublic   Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  
+  userId    Int
+  user      User     @relation("UserNotes", fields: [userId], references: [id], onDelete: Cascade)
 }
