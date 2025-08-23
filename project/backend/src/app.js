@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import notesRouter from "./routes/notes.js";
+import notesRouter from "./routes/notesRoute.js";
+import authRouter from "./routes/authRoute.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import { prisma } from "./utils/prisma.js";
 
@@ -15,7 +16,7 @@ app.use(
   cors({
     origin: ["http://localhost:5173", "http://frontend:5173"], // Both local and Docker network
     credentials: true,
-  }),
+  })
 );
 app.use(express.json());
 
@@ -24,6 +25,7 @@ app.get("/", (_, res) => {
   res.json({ message: "CollabNote API is running!" });
 });
 
+app.use("/api/auth", authRouter);
 app.use("/api/notes", notesRouter);
 
 // Global error handler
@@ -44,4 +46,9 @@ const startServer = async () => {
   }
 };
 
-startServer();
+// Only start the server outside test environment
+if (process.env.NODE_ENV !== "test") {
+  startServer();
+}
+
+export default app;

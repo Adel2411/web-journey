@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { noteCreationValidation } from "../utils/noteValidator.js";
 
 // CREATE-note validation middleware
@@ -42,7 +43,7 @@ export const updateNoteValidator = (req, res, next) => {
       const hasNoFieldsError = error.errors.some(
         (e) =>
           e.path.length === 0 &&
-          e.message === "At least one field must be provided for update",
+          e.message === "At least one field must be provided for update"
       );
       return res.status(400).json({
         success: false,
@@ -67,4 +68,26 @@ export const validateNoteId = (req, res, next) => {
     });
   }
   next();
+};
+
+// SHARE-note validation middleware
+export const validateShareBody = (req, res, next) => {
+  const schema = z.object({
+    userId: z.number().int().positive(),
+    canEdit: z.boolean().optional(),
+  });
+  try {
+    const parsed = schema.safeParse(req.body ?? {});
+    if (!parsed.success) {
+      return res.status(400).json({
+        success: false,
+        message: "Share Note validation failed",
+        errors: parsed.error.flatten().fieldErrors,
+      });
+    }
+    req.body = parsed.data;
+    next();
+  } catch (err) {
+    next(err);
+  }
 };
