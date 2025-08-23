@@ -1,6 +1,7 @@
 import { prisma } from "../utils/prisma.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { validatePassword } from "../utils/validatePassword.js";
 
 const jwtSecret = process.env.JWT_SECRET ;
 
@@ -9,6 +10,18 @@ export const register = async (req, res) => {
     const { email, password, confirmPassword, name, age } = req.body;
 
     try {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: "Invalid email format" });
+        }
+
+        const passwordError = validatePassword(password);
+        if(passwordError) {
+            return res.status(400).json({
+                message : passwordError
+            })
+        }
+
         if (password !== confirmPassword) {
             return res.status(400).json({ message: "Passwords do not match" });
         }
@@ -20,10 +33,15 @@ export const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = await prisma.user.create({
-            data: { email, password: hashedPassword, name, age }
+            data: { 
+                email : email.trim().toLowerCase(), 
+                password: hashedPassword,
+                name :name.trim(),
+                age 
+            }
         });
 
-        const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: "1h" });
+        const token = jwt.sign({ userId: user.id, name: user.name }, jwtSecret, { expiresIn: "1h" });
 
         
         user.password = undefined;
@@ -42,7 +60,7 @@ export const register = async (req, res) => {
 };
 
 export const login = async(req, res) => {
-    console.log("LOGIN ENDPOINT HIT!"); 
+    
     const { email, password } = req.body;
 
     try{
@@ -62,7 +80,7 @@ export const login = async(req, res) => {
             })
         }
 
-        const token = jwt.sign({ userId : userExist.id }, jwtSecret , {expiresIn: "1h"})
+        const token = jwt.sign({ userId : userExist.id, name: userExist.name }, jwtSecret , {expiresIn: "1h"})
 
         userExist.password = undefined;
 
