@@ -35,10 +35,16 @@ model User {
   password  String   @db.VarChar(255)
   name      String   @db.VarChar(100)
   age       Int
+  role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   notes     Note[]   @relation("UserNotes")
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 
