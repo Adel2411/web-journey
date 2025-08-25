@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
@@ -15,11 +15,23 @@ datasource db {
 }
 
 model Note {
-  id          Int      @id @default(autoincrement())
-  title       String
-  content     String
-  authorName  String?
-  isPublic    Boolean?  @default(true)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String
+  isPublic   Boolean? @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id])
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  age       Int
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Note      Note[]
 }

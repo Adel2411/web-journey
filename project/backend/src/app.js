@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import notesRouter from "./routes/notes.js";
+import authRouter from "./routes/auth.js";
 
 dotenv.config();
 
@@ -18,12 +19,19 @@ app.use(
 );
 app.use(express.json());
 
+// Debug middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
+
 // Routes
 app.get("/", (_, res) => {
   res.json({ message: "CollabNote API is running!" });
 });
 
 app.use("/api/notes", notesRouter);
+app.use("/api/auth" , authRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

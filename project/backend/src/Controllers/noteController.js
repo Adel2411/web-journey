@@ -13,35 +13,46 @@ export const getNotes = async (req, res) => {
   if (title || content) {
     const findnote = await prisma.note.findMany({
       where: {
+        user_id: req.user.id,
         title: { contains: title || "", mode: "insensitive" },
         content: { contains: content || "", mode: "insensitive" },
       },
       ...pagination,
     });
+
     return res.json(findnote);
+
   } else {
     const notes = await prisma.note.findMany({
+      where: {
+        user_id: req.user.id
+      } ,
       ...pagination,
       orderBy: [
         { title: "asc" },
         { createdAt: "asc" },
       ],
     });
+
     return res.json(notes);
   }
 };
 
 export const addNote = async (req, res) => {
   try {
-    const { title, content, authorName, isPublic } = req.body;
+    const { title, content, isPublic } = req.body;
+    const userId = req.user.id;
+    const finduser = await prisma.user.findUnique({ where: { id: userId } });
     const newNote = {
       "title": title,
       "content": content,
-      "authorName": authorName,
-      "isPublic": isPublic
+      "authorName":finduser.name,
+      "isPublic": isPublic,
+      "user_id": userId
     };
+
     const creatnewNote = await prisma.note.create({ data: newNote });
-    res.status(200).send(creatnewNote);
+    res.status(201).send(creatnewNote);
   } catch (error) {
     console.error("Error creating note:", error);
     res.status(500).send("Failed to create note");
@@ -49,18 +60,40 @@ export const addNote = async (req, res) => {
 };
 
 export const getNoteById = async(req,res) =>{
-  const goodId = parseInt(req.params.id);
-  const getnote = await prisma.note.findUnique({
-       where : { id : goodId}
-  });
-  if(!getnote) return res.status(404).send("note not found");
-  res.send(getnote);
+  try {
+    const goodId = parseInt(req.params.id);
+    const getnote = await prisma.note.findUnique({
+        where : 
+        { id : goodId}
+    });
+
+    if(!getnote) return res.status(404).send("note not found");
+
+    if(getnote.user_id!==req.user.id){
+      return res.status(401).send("you don t have access to this note")
+    }
+
+    res.send(getnote);
+
+  } catch (error) {
+    console.error("Error finding note:", error);
+    console.error("Error finding note:", error);  }
 };
 
 export const updateNote = async(req,res) =>{
   const goodId = parseInt(req.params.id);
   const { title, content, authorName, isPublic } = req.body;
   try {
+     const getnote = await prisma.note.findUnique({
+    where: { id: goodId }
+    });
+
+    if (!getnote) return res.status(404).send("note not found");
+    
+    if(req.user.id!==getnote.user_id){
+    return res.status(401).send("you don t have access to update this note")
+    }
+
     const updateNote = await prisma.note.update({
       where : {id : goodId},
       data : {
@@ -70,7 +103,9 @@ export const updateNote = async(req,res) =>{
         "isPublic": isPublic
       }
     })
+
     res.status(200).json(updateNote);
+
   } catch (error) {
     console.error("Error updating note:", error);
     res.status(404).send("note not found");
@@ -80,9 +115,21 @@ export const updateNote = async(req,res) =>{
 export const deleteNote = async(req,res) =>{
   const goodId = parseInt(req.params.id);
   try {
-  const deletenote = await prisma.note.delete({
+
+  const getnote = await prisma.note.findUnique({
     where: { id: goodId }
   });
+
+  if (!getnote) return res.status(404).send("note not found");
+
+  if(req.user.id!==getnote.user_id){
+    return res.status(401).send("you don t have access to delete this note")
+  }
+
+   await prisma.note.delete({
+    where: { id: goodId }
+  });
+
   res.send("note deleted");
 } catch (error) {
   console.error("Error deleting note:", error);
