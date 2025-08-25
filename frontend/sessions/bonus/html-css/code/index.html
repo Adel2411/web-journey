@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta information about the page -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="My first beautiful webpage showcasing HTML and CSS fundamentals">
+    <title>My First Web Page - HTML & CSS Workshop</title>
+    
+    <!-- External CSS link -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Semantic header with navigation -->
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo">
+                    <h1>🌟 My Portfolio</h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#hero">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#skills">Skills</a></li>
+                    <li><a href="#gallery">Gallery</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main content area -->
+    <main>
+        <!-- Hero section with gradient background -->
+        <section id="hero" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">Welcome to My First Web Page!</h1>
+                    <p class="hero-subtitle">Built with ❤️ using <strong>HTML</strong> & <em>CSS</em></p>
+                    <p class="hero-description">
+                        This beautiful page demonstrates everything I learned in the 
+                        <code>HTML & CSS Workshop</code>. From semantic structure to 
+                        stunning visual effects!
+                    </p>
+                    <a href="#about" class="cta-button">Explore My Journey</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About section with semantic elements -->
+        <section id="about" class="about">
+            <div class="container">
+                <h2 class="section-title">About This Learning Journey</h2>
+                
+                <article class="about-content">
+                    <h3>From Zero to Web Developer</h3>
+                    <p>
+                        In this workshop, I learned how to create and style my very first
+                        web page. Starting with <strong>zero knowledge</strong>, I now understand how 
+                        HTML provides structure and CSS brings beautiful design to life.
+                    </p>
+                    
+                    <blockquote>
+                        "The best way to learn HTML and CSS is by doing it!"
+                        <cite>- Workshop Instructor</cite>
+                    </blockquote>
+                    
+                    <h4>What I Built Today:</h4>
+                    
+                    <!-- Unordered list -->
+                    <ul class="achievement-list">
+                        <li>✅ Semantic HTML structure with proper elements</li>
+                        <li>✅ Responsive design that works on all devices</li>
+                        <li>✅ Beautiful typography and color schemes</li>
+                        <li>✅ Interactive forms and navigation</li>
+                        <li>✅ Modern layout with Flexbox</li>
+                        <li>✅ Visual effects and hover animations</li>
+                    </ul>
+
+                    <!-- Ordered list -->
+                    <h4>Steps I Followed:</h4>
+                    <ol class="steps-list">
+                        <li>Learned HTML document structure</li>
+                        <li>Mastered semantic elements and accessibility</li>
+                        <li>Understood the CSS Box Model</li>
+                        <li>Applied beautiful colors and typography</li>
+                        <li>Created responsive layouts with Flexbox</li>
+                        <li>Added visual effects and animations</li>
+                    </ol>
+                </article>
+                
+                <!-- Aside for additional content -->
+                <aside class="learning-resources">
+                    <h3>Learning Resources</h3>
+                    <ul>
+                        <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTML" target="_blank">MDN HTML Guide</a></li>
+                        <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">MDN CSS Guide</a></li>
+                        <li><a href="https://flexboxfroggy.com/" target="_blank">Flexbox Froggy Game</a></li>
+                    </ul>
+                </aside>
+            </div>
+        </section>
+
+        <!-- Skills section demonstrating various HTML elements -->
+        <section id="skills" class="skills">
+            <div class="container">
+                <h2 class="section-title">Skills I've Mastered</h2>
+                
+                <div class="skills-grid">
+                    <div class="skill-card">
+                        <div class="skill-icon">🏗️</div>
+                        <h3>HTML Structure</h3>
+                        <p>Creating semantic, accessible web page foundations with proper document structure and meaningful elements.</p>
+                        <div class="skill-progress">
+                            <div class="progress-bar" style="width: 90%;">90%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-card">
+                        <div class="skill-icon">🎨</div>
+                        <h3>CSS Styling</h3>
+                        <p>Transforming plain HTML into beautiful, responsive designs with modern CSS techniques and best practices.</p>
+                        <div class="skill-progress">
+                            <div class="progress-bar" style="width: 85%;">85%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-card">
+                        <div class="skill-icon">📱</div>
+                        <h3>Responsive Design</h3>
+                        <p>Creating websites that look great on phones, tablets, and desktop computers using flexible layouts.</p>
+                        <div class="skill-progress">
+                            <div class="progress-bar" style="width: 80%;">80%</div>
+                        </div>
+                    </div>
+                    
+                    <div class="skill-card featured-card">
+                        <div class="skill-icon">🎯</div>
+                        <h3>Best Practices</h3>
+                        <p>Writing clean, maintainable code following industry standards, accessibility guidelines, and modern conventions.</p>
+                        <div class="skill-progress">
+                            <div class="progress-bar" style="width: 75%;">75%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery section with images -->
+        <section id="gallery" class="gallery">
+            <div class="container">
+                <h2 class="section-title">Project Showcase</h2>
+                
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img src="https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2023/09/comparing-bad-sematics-with-good-sematics.jpg" alt="HTML structure diagram showing semantic elements">
+                        <h4>HTML Structure</h4>
+                        <p>Semantic HTML elements for better accessibility</p>
+                    </div>
+                    
+                    <div class="gallery-item">
+                        <img src="http://bs-uploads.toptal.io/blackfish-uploads/components/open_graph_image/8957074/og_image/optimized/0811-Eight_CSS_Tips_for_Advanced_Layouts_and_Effects_Dan_Social-82cd65719778f3f76676cb2f04119cce.png" alt="CSS styling examples with colors and layouts">
+                        <h4>CSS Styling</h4>
+                        <p>Beautiful designs with modern CSS techniques</p>
+                    </div>
+                    
+                    <div class="gallery-item">
+                        <img src="https://miro.medium.com/v2/resize:fit:750/1*A5878tQpq7WAMhiv7YzKEw.jpeg" alt="Responsive design mockup showing different screen sizes">
+                        <h4>Responsive Layout</h4>
+                        <p>Layouts that work on all device sizes</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact section with comprehensive form -->
+        <section id="contact" class="contact">
+            <div class="container">
+                <h2 class="section-title">Let's Connect!</h2>
+                
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <h3>Get in Touch</h3>
+                        <p>
+                            Excited about web development? I'd love to connect with fellow 
+                            beginners and share this amazing journey!
+                        </p>
+                        
+                        <div class="contact-methods">
+                            <div class="contact-method">
+                                <span class="contact-icon">📧</span>
+                                <a href="mailto:hello@mywebsite.com">hello@mywebsite.com</a>
+                            </div>
+                            <div class="contact-method">
+                                <span class="contact-icon">📱</span>
+                                <a href="tel:+1234567890">(123) 456-7890</a>
+                            </div>
+                            <div class="contact-method">
+                                <span class="contact-icon">🌐</span>
+                                <a href="https://myportfolio.com" target="_blank">www.myportfolio.com</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Comprehensive form with various input types -->
+                    <form class="contact-form" action="#" method="POST">
+                        <fieldset class="personal-info">
+                            <legend>Personal Information</legend>
+                            
+                            <div class="form-group">
+                                <label for="name" class="form-label">Full Name *</label>
+                                <input 
+                                    type="text" 
+                                    id="name" 
+                                    name="name" 
+                                    class="form-input"
+                                    placeholder="Enter your full name" 
+                                    required
+                                >
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email Address *</label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    class="form-input"
+                                    placeholder="your@email.com" 
+                                    required
+                                >
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input 
+                                    type="tel" 
+                                    id="phone" 
+                                    name="phone" 
+                                    class="form-input"
+                                    placeholder="(123) 456-7890"
+                                >
+                            </div>
+                        </fieldset>
+                        
+                        <fieldset class="preferences">
+                            <legend>Contact Preferences</legend>
+                            
+                            <div class="form-group">
+                                <label for="experience">Experience Level:</label>
+                                <select id="experience" name="experience" class="form-input">
+                                    <option value="">Select your level</option>
+                                    <option value="beginner">Complete Beginner</option>
+                                    <option value="some-experience">Some Experience</option>
+                                    <option value="intermediate">Intermediate</option>
+                                    <option value="advanced">Advanced</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group radio-group">
+                                <span class="form-label">Preferred Contact Method:</span>
+                                <div class="radio-options">
+                                    <input type="radio" id="contact-email" name="contact-method" value="email">
+                                    <label for="contact-email">Email</label>
+                                    
+                                    <input type="radio" id="contact-phone" name="contact-method" value="phone">
+                                    <label for="contact-phone">Phone</label>
+                                    
+                                    <input type="radio" id="contact-both" name="contact-method" value="both">
+                                    <label for="contact-both">Both</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group checkbox-group">
+                                <input type="checkbox" id="newsletter" name="newsletter" value="yes">
+                                <label for="newsletter">Subscribe to newsletter for web development tips</label>
+                            </div>
+                        </fieldset>
+                        
+                        <div class="form-group">
+                            <label for="message" class="form-label">Your Message *</label>
+                            <textarea 
+                                id="message" 
+                                name="message" 
+                                class="form-input"
+                                rows="5"
+                                placeholder="Tell me about your web development journey or ask any questions!"
+                                required
+                            ></textarea>
+                        </div>
+                        
+                        <button type="submit" class="form-button">Send Message 🚀</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Semantic footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>My First Website</h3>
+                    <p>Built with passion during the HTML & CSS Workshop</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#hero">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#skills">Skills</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Technologies Used</h4>
+                    <ul>
+                        <li><span>HTML5</span> - Structure</li>
+                        <li><span>CSS3</span> - Styling</li>
+                        <li><span>Flexbox</span> - Layout</li>
+                        <li><span>Google Fonts</span> - Typography</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 My First Website. Built with ❤️ in the HTML & CSS Workshop by <strong>Adel HB</strong></p>
+                <p><small>This page demonstrates semantic HTML, modern CSS, responsive design, and accessibility best practices.</small></p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

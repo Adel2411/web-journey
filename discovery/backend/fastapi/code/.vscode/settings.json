@@ -1,0 +1,22 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/discovery/backend/fastapi/venv/bin/python",
+  "python.analysis.typeCheckingMode": "strict",
+
+  "python.analysis.extraPaths": [
+    "./backend/src"//to fix i forget how to set this path 
+  ],
+
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "never",
+      "source.fixAll": "always"
+    }
+  },
+
+  "ruff.path": [
+    "${workspaceFolder}/discovery/backend/fastapi/bin/ruff"
+  ],
+  "postman.settings.dotenv-detection-notification-visibility": false
+}
