@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
     res.send('Welcome to the Collaborative Note-Taking API');
 });
 
-app.use('/', router)
+app.use('/api/notes', router)
 
 const PORT = 5000;
 app.listen(PORT, () => {
