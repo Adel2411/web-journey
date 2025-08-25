@@ -2,6 +2,8 @@ import { prisma } from "../utils/prisma.js";
 import { formatNote, formatNotes } from "../utils/noteFormatter.js";
 import { httpError } from "../utils/errorHandler.js";
 
+const isAdminRoute = (req) => req.path.startsWith('/admin');
+
 // GET /api/notes  ── list notes with search, sorting, and pagination
 export const getNotes = async (req, res, next) => {
   try {
@@ -44,7 +46,7 @@ export const getNotes = async (req, res, next) => {
     let notes;
     let total;
 
-    if( req.user.role === "ADMIN" ) {
+    if( isAdminRoute(req) && req.user.role === "ADMIN" ) {
       notes = await prisma.note.findMany({
         take :limit,
         skip,
@@ -119,7 +121,7 @@ export const getNoteById = async (req, res, next) => {
 
     if (!note) return next(httpError("Note not found", 404, "NOT_FOUND"));
 
-    if( req.user.role === "USER" ) {
+    if( req.user.role === "USER" || !isAdminRoute(req) ) {
       if(note.userId !== req.user.id) return next(httpError("You are not authorized to access this note", 404, "NOT_FOUND"))
     }
 
@@ -142,7 +144,7 @@ export const updateNote = async (req, res, next) => {
     const existing = await prisma.note.findUnique({ where: { id: noteId } });
     if (!existing) return next(httpError("Note not found", 404, "NOT_FOUND"));
     
-    if( req.user.role === "USER" ) {
+    if( req.user.role === "USER"  || !isAdminRoute(req) ) {
       if( existing.userId !== req.user.id) return next(httpError("You are not authorized to update this note", 404, "NOT_FOUND"));
     }
     const updated = await prisma.note.update({ where: { id: noteId }, data });
@@ -159,7 +161,7 @@ export const deleteNote = async (req, res, next) => {
 
     if (!existing) return next(httpError("Note not found", 404, "NOT_FOUND"));
     
-    if( req.user.role === "USER" ) {
+    if( req.user.role === "USER"  || !isAdminRoute(req) ) {
       if(existing.userId !== req.user.id) return next(httpError("You are not authorized to delete this note", 404, "FORBIDDEN"));
     }
 

@@ -7,7 +7,7 @@ const jwtSecret = process.env.JWT_SECRET ;
 
 
 export const register = async (req, res) => {
-    const { email, password, confirmPassword, name, age } = req.body;
+    const { email, password, confirmPassword, name, age, role } = req.body;
 
     try {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -30,6 +30,19 @@ export const register = async (req, res) => {
             return res.status(400).json({ message: "You must be at least 18 years old" });
         }
 
+        if (role && !["USER", "ADMIN"].includes(role)) {
+            return res.status(400).json({ message: "Invalid role. Must be USER or ADMIN" });
+        }
+
+
+        const existingUser = await prisma.user.findUnique({
+            where: { email: email.trim().toLowerCase() }
+        });
+
+        if (existingUser) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = await prisma.user.create({
@@ -37,11 +50,12 @@ export const register = async (req, res) => {
                 email : email.trim().toLowerCase(), 
                 password: hashedPassword,
                 name :name.trim(),
-                age 
+                age,
+                role: role || "USER"
             }
         });
 
-        const token = jwt.sign({ userId: user.id, name: user.name }, jwtSecret, { expiresIn: "1h" });
+        const token = jwt.sign({ userId: user.id, name: user.name, role: user.role  }, jwtSecret, { expiresIn: "1h" });
 
         
         user.password = undefined;
@@ -80,7 +94,7 @@ export const login = async(req, res) => {
             })
         }
 
-        const token = jwt.sign({ userId : userExist.id, name: userExist.name }, jwtSecret , {expiresIn: "1h"})
+        const token = jwt.sign({ userId : userExist.id, name: userExist.name, role: userExist.role }, jwtSecret , {expiresIn: "1h"})
 
         userExist.password = undefined;
 
