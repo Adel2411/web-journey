@@ -1,5 +1,5 @@
 const express = require('express');
-const prisma = require('../prismaClient');
+const prisma = require('../client.js');
 const router = express.Router();
 
 router.get('/api/notes', async (req, res) => {
