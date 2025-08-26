@@ -29,7 +29,7 @@ export async function signup(req,res){
             }
         })
         
-        const token = jwt.sign({ id: createUser.id  },process.env.JWT_SECRET_KEY, { expiresIn: process.env.EXPIRATION_TIME });
+        const token = jwt.sign({ id: createUser.id , role : createUser.role },process.env.JWT_SECRET_KEY, { expiresIn: process.env.EXPIRATION_TIME });
 
         res.json({
         message: "registration successful",
@@ -37,7 +37,10 @@ export async function signup(req,res){
                 id: createUser.id,
                 name: createUser.name,
                 email: createUser.email,
-                age: createUser.age
+                age: createUser.age,
+                role : createUser.role,
+                createdAt : createUser.createdAt,
+                updatedAt : createUser.updatedAt
             },
         token
         });
@@ -62,13 +65,16 @@ export async function login(req,res){
            return  res.status(400).json({message: "password incorrect"});
         }
 
-        const token = jwt.sign({ id: existing.id  },process.env.JWT_SECRET_KEY, { expiresIn: process.env.EXPIRATION_TIME });
+        const token = jwt.sign({ id: existing.id , role: existing.role },process.env.JWT_SECRET_KEY, { expiresIn: process.env.EXPIRATION_TIME });
         const user = {
             "token" : token,
             "id":existing.id,
             "name" : existing.name ,
             "email" : existing.email ,
-            "age" : existing.age
+            "age" : existing.age,
+            "role" : existing.role,
+            "createdAt" : existing.createdAt,
+            "updatedAt" : existing.updatedAt
         };
 
         res.json({message :"login successful" , user })

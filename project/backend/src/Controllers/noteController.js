@@ -4,60 +4,71 @@ const prisma = new PrismaClient();
 
 
 export const getNotes = async (req, res) => {
-  const { title, content, skip, take } = req.query;
+  try {
+    const { title, content, skip, take } = req.query;
 
-  const pagination = {};
-  if (skip) pagination.skip = +skip;
-  if (take) pagination.take = +take;
+    const pagination = {};
+      if (skip) pagination.skip = +skip;
+      if (take) pagination.take = +take;
 
-  if (title || content) {
-    const findnote = await prisma.note.findMany({
-      where: {
-        user_id: req.user.id,
-        title: { contains: title || "", mode: "insensitive" },
-        content: { contains: content || "", mode: "insensitive" },
-      },
-      ...pagination,
-    });
+    const filtering =
+      title || content
+        ? {
+          title: { contains: title || "", mode: "insensitive" },
+          content: { contains: content || "", mode: "insensitive" },
+          }
+          : {};
 
-    return res.json(findnote);
+      const roleCheck =    
+        req.user.role=="user" ? {user_id : req.user.id} : {}
 
-  } else {
-    const notes = await prisma.note.findMany({
-      where: {
-        user_id: req.user.id
-      } ,
-      ...pagination,
-      orderBy: [
-        { title: "asc" },
-        { createdAt: "asc" },
-      ],
-    });
+      const findnote = await prisma.note.findMany({
+        where: {
+          ...roleCheck ,
+          ...filtering
+        },
+        ...pagination,
+        orderBy: [
+          { title: "asc" },
+          { createdAt: "asc" },
+        ],
+        });
 
-    return res.json(notes);
+        return res.json(findnote);
+
+  } catch (error) {
+    return res.status(500).json({ message: "An error occurred", error });
   }
 };
 
 export const addNote = async (req, res) => {
   try {
-    const { title, content, isPublic } = req.body;
-    const userId = req.user.id;
-    const finduser = await prisma.user.findUnique({ where: { id: userId } });
-    const newNote = {
-      "title": title,
-      "content": content,
-      "authorName":finduser.name,
-      "isPublic": isPublic,
-      "user_id": userId
-    };
+    const { title, content, isPublic, userId: requestedUserId } = req.body;
 
-    const creatnewNote = await prisma.note.create({ data: newNote });
-    res.status(201).send(creatnewNote);
+    let noteOwnerId = req.user.id; 
+
+    if (req.user.role === "admin" && requestedUserId) {
+      noteOwnerId = requestedUserId;
+    }
+
+    const owner = await prisma.user.findUnique({ where: { id: noteOwnerId } });
+    if (!owner) return res.status(404).send("User not found");
+
+    const newNote = await prisma.note.create({
+      data: {
+        title,
+        content,
+        isPublic,
+        user_id: noteOwnerId,
+      },
+    });
+
+    res.status(201).json(newNote);
   } catch (error) {
-    console.error("Error creating note:", error);
-    res.status(500).send("Failed to create note");
+    res.status(500).json({ message: "Failed to create note", error });
   }
 };
+
 
 export const getNoteById = async(req,res) =>{
   try {
@@ -69,15 +80,15 @@ export const getNoteById = async(req,res) =>{
 
     if(!getnote) return res.status(404).send("note not found");
 
-    if(getnote.user_id!==req.user.id){
-      return res.status(401).send("you don t have access to this note")
+    if((getnote.user_id!==req.user.id)&&(req.user.role!=="admin")){
+      return res.status(404).send("you don t have access to this note")
     }
 
     res.send(getnote);
 
   } catch (error) {
-    console.error("Error finding note:", error);
-    console.error("Error finding note:", error);  }
+    res.status(500).json({ message: "Failed to retrieve note", error });
+  }
 };
 
 export const updateNote = async(req,res) =>{
@@ -90,7 +101,7 @@ export const updateNote = async(req,res) =>{
 
     if (!getnote) return res.status(404).send("note not found");
     
-    if(req.user.id!==getnote.user_id){
+    if((getnote.user_id!==req.user.id)&&(req.user.role!=="admin")){
     return res.status(401).send("you don t have access to update this note")
     }
 
@@ -104,11 +115,10 @@ export const updateNote = async(req,res) =>{
       }
     })
 
-    res.status(200).json(updateNote);
+    res.json(updateNote);
 
   } catch (error) {
-    console.error("Error updating note:", error);
-    res.status(404).send("note not found");
+    res.status(500).json({ message: "Failed to update note", error });
   }
 };
 
@@ -122,7 +132,7 @@ export const deleteNote = async(req,res) =>{
 
   if (!getnote) return res.status(404).send("note not found");
 
-  if(req.user.id!==getnote.user_id){
+  if((getnote.user_id!==req.user.id)&&(req.user.role!=="admin")){
     return res.status(401).send("you don t have access to delete this note")
   }
 
@@ -132,7 +142,6 @@ export const deleteNote = async(req,res) =>{
 
   res.send("note deleted");
 } catch (error) {
-  console.error("Error deleting note:", error);
-  res.status(500).send("Failed to delete note");
+  res.status(500).json({ message: "Failed to delete note", error });
 }
 };
