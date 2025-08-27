@@ -1,4 +1,6 @@
 import express from "express";
+import { authenticate } from "../middleware/auth.js";
+
 import {
   getNotes,
   getNoteById,
@@ -15,6 +17,9 @@ import {
 
 const router = express.Router();
 
+router.use(authenticate);
+
+// Routes (all require JWT now)
 router.get("/", getNotes);
 router.get("/:id", validateNoteId, getNoteById);
 router.post("/", createNoteValidator, createNote);

@@ -2,9 +2,11 @@ import { prisma } from "../utils/prisma.js";
 import { formatNote, formatNotes } from "../utils/noteFormatter.js";
 import { httpError } from "../utils/errorHandler.js";
 
-// GET /api/notes  ── list notes with search, sorting, and pagination
+// GET /api/notes ── list ONLY the current user's notes with search, sorting, and pagination
 export const getNotes = async (req, res, next) => {
   try {
+    const userId = req.user.id; // ✅ only fetch current user's notes
+
     /* ---------- pagination ---------- */
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.max(parseInt(req.query.limit) || 3, 1);
@@ -12,14 +14,17 @@ export const getNotes = async (req, res, next) => {
 
     /* ---------- search filter ---------- */
     const search = req.query.search || "";
-    const where = search
-      ? {
-          OR: [
-            { title: { contains: search, mode: "insensitive" } },
-            { content: { contains: search, mode: "insensitive" } },
-          ],
-        }
-      : {};
+    const where = {
+      userId,
+      ...(search
+        ? {
+            OR: [
+              { title: { contains: search, mode: "insensitive" } },
+              { content: { contains: search, mode: "insensitive" } },
+            ],
+          }
+        : {}),
+    };
 
     /* ---------- sorting ---------- */
     let orderBy;
@@ -47,7 +52,6 @@ export const getNotes = async (req, res, next) => {
 
     const formatted = formatNotes(notes);
 
-    /* ---------- respond ---------- */
     res.status(200).json({
       notes: formatted,
       pagination: {
@@ -62,28 +66,38 @@ export const getNotes = async (req, res, next) => {
   }
 };
 
+// POST /api/notes ── create note for current user
 export const createNote = async (req, res, next) => {
-  const { title, content, authorName = "Unknown", isPublic = true } = req.body;
   try {
+    const { title, content, isPublic = true } = req.body;
+
+    if (!title || !content) {
+      return next(httpError("Title and content are required", 400));
+    }
+
     const created = await prisma.note.create({
       data: {
         title: title.trim(),
         content: content.trim(),
-        authorName,
         isPublic,
+        userId: req.user.id, 
       },
     });
+
     res.status(201).json(formatNote(created));
   } catch (err) {
     next(err);
   }
 };
 
+
+// GET /api/notes/:id ── only if it belongs to current user
 export const getNoteById = async (req, res, next) => {
   try {
-    const note = await prisma.note.findUnique({
-      where: { id: Number(req.params.id) },
+    const note = await prisma.note.findFirst({
+      where: { id: Number(req.params.id), userId: req.user.id },
     });
+
     if (!note) return next(httpError("Note not found", 404, "NOT_FOUND"));
     res.status(200).json(formatNote(note));
   } catch (err) {
@@ -91,32 +105,42 @@ export const getNoteById = async (req, res, next) => {
   }
 };
 
+// PUT /api/notes/:id ── update only if owned by current user
 export const updateNote = async (req, res, next) => {
   const noteId = Number(req.params.id);
-  const { title, content, authorName, isPublic } = req.body;
+  const { title, content, isPublic } = req.body;
 
   const data = {};
-  if (title !== undefined) data.title = title;
-  if (content !== undefined) data.content = content;
-  if (authorName !== undefined) data.authorName = authorName;
+  if (title !== undefined) data.title = title.trim();
+  if (content !== undefined) data.content = content.trim();
   if (isPublic !== undefined) data.isPublic = isPublic;
 
   try {
-    const existing = await prisma.note.findUnique({ where: { id: noteId } });
+    const existing = await prisma.note.findFirst({
+      where: { id: noteId, userId: req.user.id },
+    });
     if (!existing) return next(httpError("Note not found", 404, "NOT_FOUND"));
 
-    const updated = await prisma.note.update({ where: { id: noteId }, data });
+    const updated = await prisma.note.update({
+      where: { id: noteId },
+      data,
+    });
+
     res.status(200).json(formatNote(updated));
   } catch (err) {
     next(err);
   }
 };
 
+// DELETE /api/notes/:id ── delete only if owned by current user
 export const deleteNote = async (req, res, next) => {
   const noteId = Number(req.params.id);
   try {
-    const existing = await prisma.note.findUnique({ where: { id: noteId } });
+    const existing = await prisma.note.findFirst({
+      where: { id: noteId, userId: req.user.id },
+    });
     if (!existing) return next(httpError("Note not found", 404, "NOT_FOUND"));
+
     await prisma.note.delete({ where: { id: noteId } });
     res.status(204).send();
   } catch (err) {

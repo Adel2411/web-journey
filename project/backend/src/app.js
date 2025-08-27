@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import notesRouter from "./routes/notes.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import { prisma } from "./utils/prisma.js";
+import authRouter from "./routes/auth.js";
+import { authenticate } from "./middleware/auth.js"; // ✅ add this import
 
 dotenv.config();
 
@@ -24,21 +26,21 @@ app.get("/", (_, res) => {
   res.json({ message: "CollabNote API is running!" });
 });
 
-app.use("/api/notes", notesRouter);
+app.use("/api/auth", authRouter);
+app.use("/api/notes", authenticate, notesRouter);
 
 // Global error handler
 app.use(errorHandler);
 
 // Start server
-
 const startServer = async () => {
   try {
     await prisma.$connect();
     app.listen(PORT, () => {
-      console.log(`🚀 Server running at http://localhost:${PORT}`);
+      console.log(`Server running at http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.error("❌ Failed to connect to the database");
+    console.error("Failed to connect to the database");
     console.error(error);
     process.exit(1); // Stop the process if DB fails
   }
