@@ -31,11 +31,6 @@ export const validateUser = [
     .notEmpty().withMessage("Email shouldn't be empty")
     .isEmail().withMessage("Invalid email format"),
 
-  body("password")
-    .trim()
-    .notEmpty().withMessage("Password shouldn't be empty")
-    .isLength({ min: 6 }).withMessage("The password should be more than 6 characters"),
-
   body("age")
     .notEmpty().withMessage("Age shouldn't be empty")
     .isInt({ min: 0 }).withMessage("Invalid age format")
@@ -60,11 +55,6 @@ export const validateExistingUser = [
     .trim()
     .notEmpty().withMessage("Email shouldn't be empty")
     .isEmail().withMessage("Invalid email format"),
-   
-  body("password")
-    .trim()
-    .notEmpty().withMessage("Password shouldn't be empty")
-    .isLength({ min: 6 }).withMessage("The password should be more than 6 characters"),  
 
   (req, res, next) => {
     const errors = validationResult(req);
