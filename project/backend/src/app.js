@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import notesRouter from "./routes/notes.js";
 import authRouter from "./routes/auth.js";
+import userRouter from "./routes/user.js";
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.get("/", (_, res) => {
 
 app.use("/api/notes", notesRouter);
 app.use("/api/auth" , authRouter);
+app.use("/api/users" , userRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
