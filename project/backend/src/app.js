@@ -5,7 +5,7 @@ import notesRouter from "./routes/notes.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import { prisma } from "./utils/prisma.js";
 import authRouter from "./routes/auth.js";
-import { authenticate } from "./middleware/auth.js"; // ✅ add this import
+import { authenticate } from "./middleware/auth.js"; 
 
 dotenv.config();
 
