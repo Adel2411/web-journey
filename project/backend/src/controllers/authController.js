@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { prisma } from "../utils/prisma.js";
-import { httpError } from "../utils/errorHandler.js";
 import {
   createRefreshToken,
   verifyRefreshToken,
@@ -49,11 +48,11 @@ function parseExpiresToSeconds(input) {
   return n * mult;
 }
 
-export const registerController = async (req, res, next) => {
+export const registerController = async (req, res) => {
   const { email, password, confirmPassword, name, age, role } = req.body;
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
-    return next(httpError("Email already registered.", 409, "CONFLICT"));
+    return res.status(409).json({ error: "Email already registered." });
   }
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({
@@ -99,30 +98,26 @@ export const registerController = async (req, res, next) => {
   res.status(201).json(body);
 };
 
-export const loginController = async (req, res, next) => {
+export const loginController = async (req, res) => {
   const { email, password } = req.body;
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
-    return next(httpError("Invalid credentials.", 401, "UNAUTHENTICATED"));
+    return res.status(401).json({ error: "Invalid credentials." });
   }
   const REQUIRE_VERIFIED =
     String(process.env.REQUIRE_VERIFIED_EMAIL || "false").toLowerCase() ===
     "true";
   if (REQUIRE_VERIFIED && !user.isVerified) {
-    return next(
-      httpError(
-        "Please verify your email before logging in.",
-        403,
-        "EMAIL_NOT_VERIFIED"
-      )
-    );
+    return res
+      .status(403)
+      .json({ error: "Please verify your email before logging in." });
   }
   // Check account lockout
   if (user.lockoutUntil && user.lockoutUntil > new Date()) {
     const seconds = Math.ceil((user.lockoutUntil - new Date()) / 1000);
-    return next(
-      httpError(`Account locked. Try again in ${seconds}s.`, 423, "LOCKED")
-    );
+    return res
+      .status(423)
+      .json({ error: `Account locked. Try again in ${seconds}s.` });
   }
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) {
@@ -137,7 +132,7 @@ export const loginController = async (req, res, next) => {
       };
     }
     await prisma.user.update({ where: { id: user.id }, data });
-    return next(httpError("Invalid credentials.", 401, "UNAUTHENTICATED"));
+    return res.status(401).json({ error: "Invalid credentials." });
   }
   // On success clear attempts/lock
   await prisma.user.update({
@@ -168,15 +163,13 @@ export const loginController = async (req, res, next) => {
   res.json(body);
 };
 
-export const refreshTokenController = async (req, res, next) => {
+export const refreshTokenController = async (req, res) => {
   const token = req.body?.refreshToken || req.cookies?.refreshToken;
   if (!token)
-    return next(httpError("refreshToken is required.", 400, "BAD_REQUEST"));
+    return res.status(400).json({ error: "refreshToken is required." });
   const rec = await verifyRefreshToken(token);
   if (!rec)
-    return next(
-      httpError("Invalid or expired refresh token.", 401, "INVALID_TOKEN")
-    );
+    return res.status(401).json({ error: "Invalid or expired refresh token." });
   const accessToken = issueAccessToken(rec.userId);
   // rotate refresh token for better security
   const { token: newRefreshToken, expiresAt } = await rotateRefreshToken(
@@ -194,12 +187,11 @@ export const refreshTokenController = async (req, res, next) => {
   return res.json(body);
 };
 
-export const verifyEmailController = async (req, res, next) => {
+export const verifyEmailController = async (req, res) => {
   const token = req.query?.token || req.body?.token;
-  if (!token) return next(httpError("token is required", 400, "BAD_REQUEST"));
+  if (!token) return res.status(400).json({ error: "token is required" });
   const rec = await verifyVerificationToken(token);
-  if (!rec)
-    return next(httpError("Invalid or expired token.", 400, "INVALID_TOKEN"));
+  if (!rec) return res.status(400).json({ error: "Invalid or expired token." });
   await prisma.user.update({
     where: { id: rec.userId },
     data: { isVerified: true },
@@ -214,7 +206,7 @@ export const logoutController = async (req, res) => {
   return res.status(204).send();
 };
 
-export const logoutAllController = async (req, res, next) => {
+export const logoutAllController = async (req, res) => {
   // Requires auth; if not authenticated, return 401
   const auth = req.headers.authorization || "";
   const parts = auth.split(" ");
@@ -224,8 +216,8 @@ export const logoutAllController = async (req, res, next) => {
       await revokeAllRefreshTokensForUser(decoded.userId);
       return res.status(204).send();
     } catch {
-      return next(httpError("Invalid token.", 401, "INVALID_TOKEN"));
+      return res.status(401).json({ error: "Invalid token." });
     }
   }
-  return next(httpError("Authorization required.", 401, "UNAUTHENTICATED"));
+  return res.status(401).json({ error: "Authorization required." });
 };

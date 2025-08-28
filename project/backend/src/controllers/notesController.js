@@ -138,9 +138,9 @@ export const shareNote = async (req, res, next) => {
       return next(httpError("Note not found", 404, "NOT_FOUND"));
     }
     if (userId === req.user.userId) {
-      return next(
-        httpError("Cannot share a note with yourself.", 400, "BAD_REQUEST")
-      );
+      return res
+        .status(400)
+        .json({ error: "Cannot share a note with yourself." });
     }
     const share = await prisma.noteShare.upsert({
       where: { noteId_userId: { noteId, userId } },

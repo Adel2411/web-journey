@@ -1,6 +1,5 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "../utils/prisma.js";
-import { httpError } from "../utils/errorHandler.js";
 import {
   createResetToken,
   verifyResetToken,
@@ -40,11 +39,10 @@ export async function forgotPasswordController(req, res) {
 }
 
 // POST /api/auth/reset-password
-export async function resetPasswordController(req, res, next) {
+export async function resetPasswordController(req, res) {
   const { token, password } = req.body || {};
   const rec = await verifyResetToken(token);
-  if (!rec)
-    return next(httpError("Invalid or expired token.", 400, "INVALID_TOKEN"));
+  if (!rec) return res.status(400).json({ error: "Invalid or expired token." });
 
   const hashed = await bcrypt.hash(password, 10);
   await prisma.user.update({
