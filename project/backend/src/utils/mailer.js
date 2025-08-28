@@ -92,7 +92,9 @@ export async function sendVerificationEmail({ to, token, user }) {
   const appName = process.env.APP_NAME || "CollabNote";
   const frontendBase = process.env.FRONTEND_URL || "http://localhost:5173";
   const verifyPath = process.env.VERIFY_PATH || "/verify-email";
-  const verifyUrl = `${frontendBase}${verifyPath}?token=${encodeURIComponent(token)}`;
+  const verifyUrl = `${frontendBase}${verifyPath}?token=${encodeURIComponent(
+    token
+  )}`;
 
   const subject = `${appName} email verification`;
   const greetingName = user?.name ? user.name : "there";

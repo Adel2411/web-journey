@@ -65,13 +65,17 @@ export const getNotes = async (req, res, next) => {
 };
 
 export const createNote = async (req, res, next) => {
-  const { title, content, isPublic = true } = req.body;
+  const { title, content, isPublic = true, authorName } = req.body;
   try {
     const created = await prisma.note.create({
       data: {
         title: title.trim(),
         content: content.trim(),
         isPublic,
+        // Only set authorName if provided; otherwise Prisma default remains
+        ...(authorName !== undefined
+          ? { authorName: String(authorName).trim() }
+          : {}),
         userId: req.user.userId,
       },
     });
@@ -94,11 +98,12 @@ export const getNoteById = async (req, res, next) => {
 
 export const updateNote = async (req, res, next) => {
   const noteId = Number(req.params.id);
-  const { title, content, isPublic } = req.body;
+  const { title, content, isPublic, authorName } = req.body;
   const data = {};
   if (title !== undefined) data.title = title;
   if (content !== undefined) data.content = content;
   if (isPublic !== undefined) data.isPublic = isPublic;
+  if (authorName !== undefined) data.authorName = String(authorName).trim();
   try {
     const perm = await userCanEditNote(req.user.userId, noteId);
     if (!perm.ok) return next(httpError("Note not found", 404, "NOT_FOUND"));
@@ -133,9 +138,9 @@ export const shareNote = async (req, res, next) => {
       return next(httpError("Note not found", 404, "NOT_FOUND"));
     }
     if (userId === req.user.userId) {
-      return res
-        .status(400)
-        .json({ error: "Cannot share a note with yourself." });
+      return next(
+        httpError("Cannot share a note with yourself.", 400, "BAD_REQUEST")
+      );
     }
     const share = await prisma.noteShare.upsert({
       where: { noteId_userId: { noteId, userId } },

@@ -364,31 +364,222 @@ Screenshots of each test are saved under `./screenshots/`
 📸 Screenshot:  
 ![DB Error](./screenshots/db-connection-error.png)
 
-# 🏆 Backend Challenge 2 — Solution Documentation: Express API & Database Foundation
+# 🏆 Backend Challenge 2 — Solution Documentation JWT Authentication & User Management
 
-Here’s how it works in this codebase:
+## Response Form
 
-- Password reset (forgot/reset)
+- Success: `{ success: true, message?: string, data?: any }` (for some endpoints we return only `{ message, data }`)
+- Error: `{ success: false, error: { code: string, message: string, details?: any }, status: number, requestId?: string }`
 
-  - POST /api/auth/forgot-password
-    - Input: { email } (Zod-validated).
-    - Looks up the user; always returns 200 with a generic message (no account enumeration).
-    - If the user exists:
-      - Creates a PasswordReset record { token, userId, expiresAt }.
-      - Sends an email via Nodemailer using SMTP if configured (fallback: JSON transport logs only).
-      - The reset link is built from FRONTEND_URL + RESET_PATH + ?token=...
-      - If INCLUDE_RESET_TOKEN_IN_RESPONSE=true (your .env has true), the API also returns { token, expiresAt } for testing.
-  - POST /api/auth/reset-password
-    - Input: { token, password, confirmPassword } (Zod-validated).
-    - Verifies token and expiry, hashes the new password with bcrypt (10 rounds), updates the user, deletes the PasswordReset row, and returns a success message.
+Typical error codes: `VALIDATION_ERROR`, `UNAUTHENTICATED`, `INVALID_TOKEN`, `FORBIDDEN`, `NOT_FOUND`, `CONFLICT`, `LOCKED`, `RATE_LIMITED`, `INTERNAL_ERROR`.
 
-- Email settings
-  - Uses .env: SMTP_HOST/PORT/SECURE/USER/PASS and EMAIL_FROM. With Gmail, use an App Password.
-  - If SMTP isn’t set, emails aren’t actually sent; they’re logged via JSON transport, and the token can come back in the response (when enabled).
-    Clicking the link opens your frontend’s reset page with a token in the URL, then the frontend finishes the flow:
+## Endpoints
 
-The email link is: FRONTEND_URL + RESET_PATH + ?token=... (from sendPasswordResetEmail).
-Frontend reads the token, shows a “set new password” form.
-On submit, frontend calls POST /api/auth/reset-password with { token, password, confirmPassword }.
-Backend verifies the token (not expired, exists in PasswordReset), hashes the new password (bcrypt 10 rounds), updates the user, deletes the token (single‑use), and returns “Password has been reset.”
-If the token is invalid/expired, backend returns 400.
+### POST /register
+
+Registers a new user and sends an email verification link.
+
+Body
+
+```json
+{
+  "email": "user@example.com",
+  "password": "StrongPass123",
+  "confirmPassword": "StrongPass123",
+  "name": "Jane",
+  "age": 25,
+  "role": "ADMIN" | "USER" (optional)
+}
+```
+
+Response
+
+```json
+{
+  "message": "User registered successfully. Please verify your email.",
+  "data": {
+    "user": {
+      "id": 1,
+      "email": "user@example.com",
+      "name": "Jane",
+      "age": 25,
+      "createdAt": "..."
+    },
+    "token": "<access-jwt>",
+    "accessTokenExpiresIn": 3600,
+    "refreshToken": "<refresh-token>",
+    "refreshTokenExpiresAt": "2025-09-..."
+  }
+}
+```
+
+Notes
+
+- If `REQUIRE_VERIFIED_EMAIL=true`, unverified users cannot login until they hit `/verify`.
+- Password policy enforced via Zod `passwordSchema` (>= 8 chars, letters+digit).
+
+---
+
+### POST /login
+
+Authenticates a user.
+
+Body
+
+```json
+{ "email": "user@example.com", "password": "StrongPass123" }
+```
+
+Response
+
+```json
+{
+  "message": "Login successful",
+  "data": {
+    "user": {
+      "id": 1,
+      "email": "user@example.com",
+      "name": "Jane",
+      "age": 25,
+      "createdAt": "..."
+    },
+    "token": "<access-jwt>",
+    "accessTokenExpiresIn": 3600,
+    "refreshToken": "<refresh-token>",
+    "refreshTokenExpiresAt": "2025-09-..."
+  }
+}
+```
+
+Errors
+
+- 401 UNAUTHENTICATED: invalid credentials
+- 403 EMAIL_NOT_VERIFIED: when `REQUIRE_VERIFIED_EMAIL=true`
+- 423 LOCKED: account lockout after repeated failures
+
+---
+
+### POST /refresh
+
+Issues a new access token and rotates the refresh token.
+
+Body
+
+```json
+{ "refreshToken": "<refresh-token>" }
+```
+
+Response
+
+```json
+{
+  "token": "<new-access-jwt>",
+  "accessTokenExpiresIn": 3600,
+  "refreshToken": "<rotated-refresh-token>",
+  "refreshTokenExpiresAt": "2025-09-..."
+}
+```
+
+Errors
+
+- 400 BAD_REQUEST: missing `refreshToken`
+- 401 INVALID_TOKEN: refresh token invalid/expired/revoked
+
+---
+
+### POST /logout
+
+Revokes a specific refresh token. If provided in the body or cookie, it is revoked; idempotent.
+
+Body (one of)
+
+```json
+{ "refreshToken": "<refresh-token>" }
+```
+
+Response: `204 No Content`
+
+---
+
+### POST /logout-all
+
+Revokes all refresh tokens for the authenticated user.
+
+Headers
+
+```
+Authorization: Bearer <access-jwt>
+```
+
+Response: `204 No Content`
+
+Errors
+
+- 401 INVALID_TOKEN/UNAUTHENTICATED if missing/invalid access token
+
+---
+
+### GET /verify and POST /verify
+
+Email verification. Accepts token via query or JSON body.
+
+Usage
+
+- `GET /verify?token=<token>`
+- `POST /verify` with `{ "token": "<token>" }`
+
+Response
+
+```json
+{ "message": "Email verified successfully." }
+```
+
+Errors
+
+- 400 BAD_REQUEST: token not provided
+- 400 INVALID_TOKEN: token invalid/expired
+
+---
+
+### POST /forgot-password
+
+Initiates password reset for a user email. Always responds generically to avoid enumeration.
+
+Body
+
+```json
+{ "email": "user@example.com" }
+```
+
+Response
+
+- Default (dev): `{ "message": "Reset token generated.", "token": "<reset-token>", "expiresAt": "..." }` when `INCLUDE_RESET_TOKEN_IN_RESPONSE=true`
+- Otherwise: `{ "message": "If that email exists, a reset link has been sent." }`
+
+---
+
+### POST /reset-password
+
+Resets the password using the reset token.
+
+Body
+
+```json
+{
+  "token": "<reset-token>",
+  "password": "NewStrongPass123",
+  "confirmPassword": "NewStrongPass123"
+}
+```
+
+Response
+
+```json
+{ "message": "Password has been reset." }
+```
+
+Errors
+
+- 400 INVALID_TOKEN: reset token invalid/expired
+
+---

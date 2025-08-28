@@ -1,5 +1,6 @@
 // Middleware to validate auth requests using Zod
 import { z } from "zod";
+import { httpError } from "../utils/errorHandler.js";
 
 // Strong password policy used across register and reset flows.
 export const passwordSchema = z
@@ -56,7 +57,14 @@ function handleZod(parseResult, res, next) {
   if (parseResult.success) return next();
   const issue = parseResult.error.issues?.[0];
   const message = issue?.message || "Invalid request body.";
-  return res.status(400).json({ error: message });
+  return next(
+    httpError(
+      message,
+      400,
+      "VALIDATION_ERROR",
+      parseResult.error.flatten().fieldErrors
+    )
+  );
 }
 
 // Validate: POST /api/auth/register
