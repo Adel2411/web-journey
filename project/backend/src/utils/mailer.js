@@ -87,3 +87,29 @@ export async function sendPasswordResetEmail({ to, token, user }) {
 
   return sendMail({ to, subject, text, html });
 }
+
+export async function sendVerificationEmail({ to, token, user }) {
+  const appName = process.env.APP_NAME || "CollabNote";
+  const frontendBase = process.env.FRONTEND_URL || "http://localhost:5173";
+  const verifyPath = process.env.VERIFY_PATH || "/verify-email";
+  const verifyUrl = `${frontendBase}${verifyPath}?token=${encodeURIComponent(token)}`;
+
+  const subject = `${appName} email verification`;
+  const greetingName = user?.name ? user.name : "there";
+  const text =
+    `Hi ${greetingName},\n\n` +
+    `Please verify your email to activate your ${appName} account.\n\n` +
+    `Verify link: ${verifyUrl}\n\n` +
+    `If you did not sign up, you can ignore this email.`;
+
+  const html = `
+    <p>Hi ${greetingName},</p>
+    <p>Please verify your email to activate your <strong>${appName}</strong> account.</p>
+    <p>
+      <a href="${verifyUrl}" style="display:inline-block;padding:10px 16px;background:#10b981;color:#fff;text-decoration:none;border-radius:6px">Verify email</a>
+    </p>
+    <p>If you did not sign up, you can ignore this email.</p>
+  `;
+
+  return sendMail({ to, subject, text, html });
+}

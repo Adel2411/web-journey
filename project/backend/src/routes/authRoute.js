@@ -5,6 +5,7 @@ import {
   refreshTokenController,
   logoutController,
   logoutAllController,
+  verifyEmailController,
 } from "../controllers/authController.js";
 import {
   validateRegister,
@@ -54,5 +55,9 @@ router.post("/reset-password", rlShort, validateReset, resetPasswordController);
 router.post("/refresh", rlShort, validateRefresh, refreshTokenController);
 router.post("/logout", logoutController);
 router.post("/logout-all", logoutAllController);
+
+// Email verification: accept token via query or body
+router.get("/verify", verifyEmailController);
+router.post("/verify", verifyEmailController);
 
 export default router;

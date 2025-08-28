@@ -88,9 +88,9 @@ datasource db {
 
 model Note {
   id         Int      @id @default(autoincrement())
-  title      String   @db.VarChar(100)  
-  content    String   @db.VarChar(1000) 
-  authorName String   @default("Unknown") @db.VarChar(100) 
+  title      String   @db.VarChar(100)
+  content    String   @db.VarChar(1000)
+  authorName String   @default("Unknown") @db.VarChar(100)
   isPublic   Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -116,7 +116,7 @@ All setup and middleware are configured inside `src/app.js`, and the server wait
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import notesRouter from './routes/notes.js';
+import notesRouter from "./routes/notes.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import { prisma } from "./utils/prisma.js";
 
@@ -130,7 +130,7 @@ app.use(
   cors({
     origin: "http://localhost:5173", // Vite frontend URL
     credentials: true,
-  }),
+  })
 );
 app.use(express.json());
 
@@ -152,7 +152,7 @@ const startServer = async () => {
       console.log(`🚀 Server running at http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.error('❌ Failed to connect to the database');
+    console.error("❌ Failed to connect to the database");
     console.error(error);
     process.exit(1); // Stop the process if DB fails
   }
@@ -195,28 +195,28 @@ This keeps response formatting centralized and reusable.
 Defined in `src/routes/notes.js`, all routes follow REST principles and use middleware for validation:
 
 ```js
-import express from 'express';
+import express from "express";
 import {
   getNotes,
   getNoteById,
   createNote,
   updateNote,
   deleteNote,
-} from '../Controllers/notesController.js';
+} from "../Controllers/notesController.js";
 
 import {
   createNoteValidator,
   updateNoteValidator,
   validateNoteId,
-} from '../utils/noteValidator.js';
+} from "../utils/noteValidator.js";
 
 const router = express.Router();
 
-router.get('/', getNotes);
-router.get('/:id', validateNoteId, getNoteById);
-router.post('/', createNoteValidator, createNote);
-router.put('/:id', validateNoteId, updateNoteValidator, updateNote);
-router.delete('/:id', validateNoteId, deleteNote);
+router.get("/", getNotes);
+router.get("/:id", validateNoteId, getNoteById);
+router.post("/", createNoteValidator, createNote);
+router.put("/:id", validateNoteId, updateNoteValidator, updateNote);
+router.delete("/:id", validateNoteId, deleteNote);
 
 export default router;
 ```
@@ -276,7 +276,7 @@ Returns custom responses like:
 Custom errors are thrown using a helper:
 
 ```js
-httpError('Note not found', 404, 'NOT_FOUND')
+httpError("Note not found", 404, "NOT_FOUND");
 ```
 
 And caught in the error middleware to return:
@@ -344,18 +344,18 @@ This will return:
 
 Screenshots of each test are saved under `./screenshots/`
 
-| ✅ Test Case           | Description                                                   | Screenshot                                               |
-| --------------------- | ------------------------------------------------------------- | -------------------------------------------------------- |
-| 📄 **Create Note**    | Can create notes with valid data                              | ![Create Note](./screenshots/cantCreateNoteWithoutRequiredFields.png)      |
-| ❌ **Validation**      | Cannot create notes without required fields                   | ![Invalid Create](./screenshots/cantCreateNoteWithoutRequiredFields.png) |
-| 📋 **Fetch All**      | Can retrieve all notes (matching frontend sample data format) | ![All Notes](./screenshots/canGetAllNotes.png)            |
-| 🔎 **Fetch One**      | Can retrieve specific note by ID                              | ![Note by ID](./screenshots/canRetrieveDataWithId.png)          |
-| 🚫 **404 Not Found**  | Returns 404 for non-existent note IDs                         | ![404 Not Found](./screenshots/return404ForNoneExistingNote.png)       |
-| ✏️ **Update**         | Can update existing notes                                     | ![Update Note](./screenshots/updateExistingNote.png)            |
-| ❌ **Delete**          | Can delete notes                                              | ![Delete Note](./screenshots/CanDeleteNote.png)            |
-| 🌐 **CORS**           | CORS allows frontend connections                              | ![CORS](./screenshots/CORSallowsfrontendconnections.png)                  |
-| ⚠️ **Error Handling** | Proper error messages for invalid requests                    | ![Errors](./screenshots/Propererrormessagesforinvalidrequests.png)              |
-| 🔌 DB Failure      | Gracefully handles database connection errors                 |
+| ✅ Test Case          | Description                                                   | Screenshot                                                               |
+| --------------------- | ------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| 📄 **Create Note**    | Can create notes with valid data                              | ![Create Note](./screenshots/cantCreateNoteWithoutRequiredFields.png)    |
+| ❌ **Validation**     | Cannot create notes without required fields                   | ![Invalid Create](./screenshots/cantCreateNoteWithoutRequiredFields.png) |
+| 📋 **Fetch All**      | Can retrieve all notes (matching frontend sample data format) | ![All Notes](./screenshots/canGetAllNotes.png)                           |
+| 🔎 **Fetch One**      | Can retrieve specific note by ID                              | ![Note by ID](./screenshots/canRetrieveDataWithId.png)                   |
+| 🚫 **404 Not Found**  | Returns 404 for non-existent note IDs                         | ![404 Not Found](./screenshots/return404ForNoneExistingNote.png)         |
+| ✏️ **Update**         | Can update existing notes                                     | ![Update Note](./screenshots/updateExistingNote.png)                     |
+| ❌ **Delete**         | Can delete notes                                              | ![Delete Note](./screenshots/CanDeleteNote.png)                          |
+| 🌐 **CORS**           | CORS allows frontend connections                              | ![CORS](./screenshots/CORSallowsfrontendconnections.png)                 |
+| ⚠️ **Error Handling** | Proper error messages for invalid requests                    | ![Errors](./screenshots/Propererrormessagesforinvalidrequests.png)       |
+| 🔌 DB Failure         | Gracefully handles database connection errors                 |
 
 ### 🔌 Handles Database Connection Errors
 
@@ -364,3 +364,31 @@ Screenshots of each test are saved under `./screenshots/`
 📸 Screenshot:  
 ![DB Error](./screenshots/db-connection-error.png)
 
+# 🏆 Backend Challenge 2 — Solution Documentation: Express API & Database Foundation
+
+Here’s how it works in this codebase:
+
+- Password reset (forgot/reset)
+
+  - POST /api/auth/forgot-password
+    - Input: { email } (Zod-validated).
+    - Looks up the user; always returns 200 with a generic message (no account enumeration).
+    - If the user exists:
+      - Creates a PasswordReset record { token, userId, expiresAt }.
+      - Sends an email via Nodemailer using SMTP if configured (fallback: JSON transport logs only).
+      - The reset link is built from FRONTEND_URL + RESET_PATH + ?token=...
+      - If INCLUDE_RESET_TOKEN_IN_RESPONSE=true (your .env has true), the API also returns { token, expiresAt } for testing.
+  - POST /api/auth/reset-password
+    - Input: { token, password, confirmPassword } (Zod-validated).
+    - Verifies token and expiry, hashes the new password with bcrypt (10 rounds), updates the user, deletes the PasswordReset row, and returns a success message.
+
+- Email settings
+  - Uses .env: SMTP_HOST/PORT/SECURE/USER/PASS and EMAIL_FROM. With Gmail, use an App Password.
+  - If SMTP isn’t set, emails aren’t actually sent; they’re logged via JSON transport, and the token can come back in the response (when enabled).
+    Clicking the link opens your frontend’s reset page with a token in the URL, then the frontend finishes the flow:
+
+The email link is: FRONTEND_URL + RESET_PATH + ?token=... (from sendPasswordResetEmail).
+Frontend reads the token, shows a “set new password” form.
+On submit, frontend calls POST /api/auth/reset-password with { token, password, confirmPassword }.
+Backend verifies the token (not expired, exists in PasswordReset), hashes the new password (bcrypt 10 rounds), updates the user, deletes the token (single‑use), and returns “Password has been reset.”
+If the token is invalid/expired, backend returns 400.

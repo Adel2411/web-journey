@@ -8,6 +8,12 @@ import {
   revokeRefreshToken,
   revokeAllRefreshTokensForUser,
 } from "../utils/refreshToken.js";
+import {
+  createVerificationToken,
+  verifyVerificationToken,
+  consumeVerificationToken,
+} from "../utils/emailVerification.js";
+import { sendVerificationEmail } from "../utils/mailer.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES || "1h";
@@ -20,6 +26,26 @@ function issueAccessToken(userId, role) {
   return jwt.sign({ userId, role }, JWT_SECRET, {
     expiresIn: ACCESS_TOKEN_EXPIRES,
   });
+}
+
+function parseExpiresToSeconds(input) {
+  if (typeof input === "number") return input;
+  const str = String(input || "").trim();
+  const m = str.match(/^(\d+)\s*([smhd])?$/i);
+  if (!m) return null;
+  const n = parseInt(m[1], 10);
+  const unit = (m[2] || "s").toLowerCase();
+  const mult =
+    unit === "s"
+      ? 1
+      : unit === "m"
+      ? 60
+      : unit === "h"
+      ? 3600
+      : unit === "d"
+      ? 86400
+      : 1;
+  return n * mult;
 }
 
 export const registerController = async (req, res) => {
@@ -38,13 +64,33 @@ export const registerController = async (req, res) => {
       role: role?.toUpperCase?.() === "ADMIN" ? "ADMIN" : undefined,
     },
   });
+  // Send verification email (requires DB schema for EmailVerification)
+  try {
+    const { token: verifyToken } = await createVerificationToken(user.id);
+    await sendVerificationEmail({ to: user.email, token: verifyToken, user });
+  } catch (e) {
+    console.warn("[verify-email] failed to create/send token:", e?.message || e);
+  }
   const token = issueAccessToken(user.id, user.role);
   const { token: refreshToken, expiresAt } = await createRefreshToken(user.id);
-  const { password: _, ...userInfo } = user;
-  const body = { token, user: userInfo };
+  const safeUser = {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    age: user.age,
+    createdAt: user.createdAt,
+  };
+  const body = {
+  message: "User registered successfully. Please verify your email.",
+    data: {
+      user: safeUser,
+      token,
+      accessTokenExpiresIn: parseExpiresToSeconds(ACCESS_TOKEN_EXPIRES),
+    },
+  };
   if (INCLUDE_REFRESH_TOKEN_IN_RESPONSE) {
-    body.refreshToken = refreshToken;
-    body.refreshTokenExpiresAt = expiresAt;
+    body.data.refreshToken = refreshToken;
+    body.data.refreshTokenExpiresAt = expiresAt;
   }
   res.status(201).json(body);
 };
@@ -54,6 +100,14 @@ export const loginController = async (req, res) => {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     return res.status(401).json({ error: "Invalid credentials." });
+  }
+  const REQUIRE_VERIFIED =
+    String(process.env.REQUIRE_VERIFIED_EMAIL || "false").toLowerCase() ===
+    "true";
+  if (REQUIRE_VERIFIED && !user.isVerified) {
+    return res
+      .status(403)
+      .json({ error: "Please verify your email before logging in." });
   }
   // Check account lockout
   if (user.lockoutUntil && user.lockoutUntil > new Date()) {
@@ -84,11 +138,24 @@ export const loginController = async (req, res) => {
   });
   const token = issueAccessToken(user.id, user.role);
   const { token: refreshToken, expiresAt } = await createRefreshToken(user.id);
-  const { password: _, ...userInfo } = user;
-  const body = { token, user: userInfo };
+  const safeUser = {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    age: user.age,
+    createdAt: user.createdAt,
+  };
+  const body = {
+    message: "Login successful",
+    data: {
+      user: safeUser,
+      token,
+      accessTokenExpiresIn: parseExpiresToSeconds(ACCESS_TOKEN_EXPIRES),
+    },
+  };
   if (INCLUDE_REFRESH_TOKEN_IN_RESPONSE) {
-    body.refreshToken = refreshToken;
-    body.refreshTokenExpiresAt = expiresAt;
+    body.data.refreshToken = refreshToken;
+    body.data.refreshTokenExpiresAt = expiresAt;
   }
   res.json(body);
 };
@@ -106,12 +173,25 @@ export const refreshTokenController = async (req, res) => {
     token,
     rec.userId
   );
-  const body = { token: accessToken };
+  const body = {
+    token: accessToken,
+    accessTokenExpiresIn: parseExpiresToSeconds(ACCESS_TOKEN_EXPIRES),
+  };
   if (INCLUDE_REFRESH_TOKEN_IN_RESPONSE) {
     body.refreshToken = newRefreshToken;
     body.refreshTokenExpiresAt = expiresAt;
   }
   return res.json(body);
+};
+
+export const verifyEmailController = async (req, res) => {
+  const token = req.query?.token || req.body?.token;
+  if (!token) return res.status(400).json({ error: "token is required" });
+  const rec = await verifyVerificationToken(token);
+  if (!rec) return res.status(400).json({ error: "Invalid or expired token." });
+  await prisma.user.update({ where: { id: rec.userId }, data: { isVerified: true } });
+  await consumeVerificationToken(token);
+  return res.json({ message: "Email verified successfully." });
 };
 
 export const logoutController = async (req, res) => {
