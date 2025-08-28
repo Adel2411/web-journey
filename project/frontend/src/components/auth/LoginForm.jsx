@@ -2,7 +2,7 @@ import { useContext, useState } from "react"
 import { AuthContext } from "../../contexts/AuthContext"
 import { useNavigate } from "react-router-dom";
 
-export const LoginForm = () => {
+export const LoginForm = ({ onClose, onSwitchToRegister }) => {
     const { login, loading } = useContext(AuthContext);
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
@@ -11,20 +11,26 @@ export const LoginForm = () => {
     const [rememberMe, setRememberMe] = useState(false);
     
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault();  
         setError("");
-        
+
         try {
-            const res = await login(email, password);
+            const res = await login(
+                email, 
+                password
+            );
+            
             if (!res.success) {
-                setError(res.message)
+                setError(res.error);
             } else {
+                // Close modal and navigate
+                onClose?.();
                 navigate("/notes");
             }
-        } catch(err) {
-            setError("Something went wrong");
+        } catch (err) {
+            setError(err.message || "Something went wrong. Please try again.");
         }
-    }
+    };
     
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
@@ -97,7 +103,7 @@ export const LoginForm = () => {
                 <button
                     type="button"
                     className="text-cyan-600 hover:text-cyan-500 text-sm font-medium transition-colors"
-                    onClick={() => {/* Handle sign up click */}}
+                    onClick={() => onSwitchToRegister()}
                 >
                     Don't have an account? Sign up
                 </button>
