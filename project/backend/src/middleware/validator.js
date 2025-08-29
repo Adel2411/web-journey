@@ -1,4 +1,5 @@
 import { noteCreationValidation } from "../utils/noteValidator.js";
+import { z } from "zod";
 
 // CREATE-note validation middleware
 export const createNoteValidator = (req, res, next) => {

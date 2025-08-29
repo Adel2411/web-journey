@@ -13,12 +13,25 @@ import {
   validateNoteId,
 } from "../middleware/validator.js";
 
+import { authenticate } from "../middleware/auth.js";
+import { authorize } from "../middleware/authorize.js";
+
 const router = express.Router();
 
-router.get("/", getNotes);
-router.get("/:id", validateNoteId, getNoteById);
-router.post("/", createNoteValidator, createNote);
-router.put("/:id", validateNoteId, updateNoteValidator, updateNote);
-router.delete("/:id", validateNoteId, deleteNote);
+// Admin routes
+router.get("/admin",authenticate, authorize(["ADMIN"]), getNotes);
+router.get("/admin/:id", authenticate, authorize(["ADMIN"]), validateNoteId, getNoteById);
+router.put("/admin/:id", authenticate, authorize(["ADMIN"]), validateNoteId, updateNoteValidator, updateNote);
+router.delete("/admin/:id", authenticate, authorize(["ADMIN"]), validateNoteId, deleteNote);
+
+
+//user routes
+router.get("/",authenticate, getNotes);
+router.get("/:id",authenticate, validateNoteId, getNoteById);
+router.post("/",authenticate, createNoteValidator, createNote);
+router.put("/:id",authenticate, validateNoteId, updateNoteValidator, updateNote);
+router.delete("/:id",authenticate, validateNoteId, deleteNote);
+
+
 
 export default router;
