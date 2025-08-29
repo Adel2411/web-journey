@@ -1,4 +1,4 @@
-s# 🏆 Backend Challenge 1 — Solution Documentation: Express API & Database Foundation
+# 🏆 Backend Challenge 1 — Solution Documentation: Express API & Database Foundation
 
 This solution implements the foundational API for **CollabNote**, a collaborative note-taking app. The backend is built using **Express.js**, **Prisma ORM**, and **PostgreSQL**, with full CRUD operations and frontend‑ready JSON responses.
 
@@ -655,7 +655,11 @@ Resets the password using the reset token.
 Body
 
 ```json
-s
+{
+  "token": "<reset-token>",
+  "password": "NewStrongPass123",
+  "confirmPassword": "NewStrongPass123"
+}
 ```
 
 Response
