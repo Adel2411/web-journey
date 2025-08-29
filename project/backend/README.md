@@ -1,4 +1,4 @@
-# 🏆 Backend Challenge 1 — Solution Documentation: Express API & Database Foundation
+s# 🏆 Backend Challenge 1 — Solution Documentation: Express API & Database Foundation
 
 This solution implements the foundational API for **CollabNote**, a collaborative note-taking app. The backend is built using **Express.js**, **Prisma ORM**, and **PostgreSQL**, with full CRUD operations and frontend‑ready JSON responses.
 
@@ -368,35 +368,82 @@ Screenshots of each test are saved under `./screenshots/`
 
 ## How it works (TL;DR)
 
-- Register
+### Register
 
-  - Validates input (email, strong password, match confirmPassword, optional name/age/role).
-  - Creates the user with a hashed password and issues tokens (short‑lived access JWT + long‑lived refresh token stored in DB).
-  - Sends a verification email with a time‑limited token. If `REQUIRE_VERIFIED_EMAIL=true`, login is blocked until verified.
+- Validates and sanitizes input (email, strong password, match confirmPassword, optional name/age/role).
+- Creates the user with a hashed password and issues tokens (short‑lived access JWT + long‑lived refresh token stored in DB).
+- Sends a verification email with a time‑limited token. If `REQUIRE_VERIFIED_EMAIL=true`, login is blocked until verified.
 
-- Login
+### Login
 
-  - Checks credentials, account lockout, and optionally email verification.
-  - Returns the same response shape as register: `{ message, data: { user, token, accessTokenExpiresIn, refreshToken, refreshTokenExpiresAt } }`.
+- Checks credentials, account lockout, and optionally email verification.
+- Returns the same response shape as register: `{ message, data: { user, token, accessTokenExpiresIn, refreshToken, refreshTokenExpiresAt } }`.
 
-- Forgot/Reset password
+### Forget-Password
 
-  - `/forgot-password` creates a one‑time, expiring reset token and sends it via email (in dev, it may be included in the response when `INCLUDE_RESET_TOKEN_IN_RESPONSE=true`).
-  - `/reset-password` validates the token and sets the new password.
+- `/forgot-password` creates a one‑time, expiring reset token and sends it via email (in dev, it may be included in the response when `INCLUDE_RESET_TOKEN_IN_RESPONSE=true`).
+- `/reset-password` validates the token and sets the new password.
 
-- flow to reset password:
+### Acces Tokens
 
--> Trigger a reset (forgot) with your email
--> Get the reset token (from response in dev or from email/logs)
--> Submit the new password with the token
--> Log in with the new password
-
-- Tokens (Access vs Refresh)
-  - Access token: JWT used in `Authorization: Bearer <token>`, short‑lived; expose `accessTokenExpiresIn` (seconds) in responses.
-  - Refresh token: opaque, persisted in DB, longer‑lived; rotate on `/refresh`, revoke on `/logout`, and revoke all on `/logout-all`.
-  - Storage guidance: keep access token in memory; prefer HTTP‑only secure cookie for refresh token (or handle it strictly on the server side). Avoid storing refresh tokens in `localStorage`.
+- Access token: JWT used in `Authorization: Bearer <token>`, short‑lived; expose `accessTokenExpiresIn` (seconds) in responses.
+- Refresh token: opaque, persisted in DB, longer‑lived; rotate on `/refresh`, revoke on `/logout`, and revoke all on `/logout-all`.
 
 Auth endpoints are rate‑limited and consistently return structured JSON with clear error codes.
+
+---
+
+## Current Auth Endpoints
+
+Base path: `/api/auth`
+
+- POST `/register` — Create account (validates email, strong password + confirm, optional name/age/role).
+- POST `/login` — Email + password; returns access token and refresh token (dev option to include refresh in JSON).
+- POST `/refresh` — Rotate and return a new access token (and refresh in dev).
+- POST `/logout` — Revoke the current refresh token if provided.
+- POST `/logout-all` — Revoke all refresh tokens for the authenticated user.
+- POST `/forgot-password` — Generate a one-time reset token and send email (token can be included in JSON in dev).
+- POST `/reset-password` — Submit `token` + new password + confirm; sets a new password.
+- GET `/verify` — Verify email by token in query.
+- POST `/verify` — Verify email by token in body.
+
+Notes API reminder
+
+- Base path: `/api/notes` (protected). `authorName` is not accepted in the body; it’s derived from the related user and returned in responses.
+- Controllers
+
+  - `src/controllers/authController.js` — Register, login, refresh, logout, logout-all, verify email. Issues JWT access tokens and DB-backed refresh tokens.
+  - `src/controllers/passwordController.js` — Forgot and reset password flows. Generates one-time tokens and updates password.
+
+- Middleware
+
+  - `src/middleware/auth.js` — Auth guard. Verifies Bearer JWT, attaches `req.user { userId, role }`.
+  - `src/middleware/validateAuth.js` — Zod validators for register, login, forgot, reset, refresh. Strong password rules and confirm matching.
+  - `src/middleware/rateLimit.js` — Small factory to build IPv6-safe rate limiters for auth endpoints.
+  - `src/middleware/sanitize.js` — Global XSS sanitization for body/query/params; Express-5 safe; removes all tags by default and removes <script>/<style> including their inner text.
+
+- Routes
+
+  - `src/routes/authRoute.js` — Wires auth endpoints: register, login, refresh, logout, logout-all, forgot/reset password, email verification; applies validators and rate limiters.
+
+- Utils
+
+  - `src/utils/response.js` — Consistent JSON helpers: `ok`, `created`, `noContentOk`, `fail` with a top-level `success` flag.
+  - `src/utils/refreshToken.js` — Create/verify/rotate/revoke refresh tokens stored in DB.
+  - `src/utils/passwordReset.js` — Create/verify/consume password reset tokens.
+  - `src/utils/emailVerification.js` — Create/verify/consume email verification tokens.
+  - `src/utils/mailer.js` — Nodemailer transport (SMTP via env or dev JSON transport) to send verification and reset emails.
+  - `src/utils/sharing.js` — Permissions for notes (view/edit, accounts for shares) and includes author `user.name` for responses.
+
+- Notes API (integration point)
+  - `src/controllers/notesController.js` — Uses `req.user` from `auth.js`, derives `authorName` from `user.name` (no longer accepted from body), and returns formatted notes.
+  - `src/utils/noteFormatter.js` — Returns `authorName` from related `user.name` when present.
+
+Environment flags worth knowing
+
+- `INCLUDE_REFRESH_TOKEN_IN_RESPONSE` — When true (dev), returns refresh tokens in JSON for easier testing.
+- `INCLUDE_RESET_TOKEN_IN_RESPONSE` — When true (dev), includes reset token in the forgot-password response.
+- `REQUIRE_VERIFIED_EMAIL` — If true, blocks login until the email is verified.
 
 ## Response Form
 
