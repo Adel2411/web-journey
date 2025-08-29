@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node --watch src/app.js",
     "prisma:migrate": "prisma migrate dev",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prisma:generate": "prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -14,10 +14,15 @@
   "type": "module",
   "dependencies": {
     "@prisma/client": "^6.10.1",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.0.0",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^7.0.5",
     "prisma": "^6.10.1",
+    "xss": "^1.0.15",
     "zod": "^3.25.67"
   }
 }

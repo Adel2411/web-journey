@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -14,6 +9,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  USER
+}
+
 // note model
 model Note {
   id         Int      @id @default(autoincrement())
@@ -23,5 +23,68 @@ model Note {
   isPublic   Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  shares     NoteShare[]
 }
 
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  age       Int
+  isVerified Boolean  @default(false)
+  role      Role     @default(USER)
+  failedLoginAttempts Int     @default(0)
+  lockoutUntil        DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  notes     Note[]
+  passwordResets PasswordReset[]
+  refreshTokens  RefreshToken[]
+  sharedNotes    NoteShare[]
+  emailVerifications EmailVerification[]
+}
+
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+}
+
+model NoteShare {
+  id        Int      @id @default(autoincrement())
+  noteId    Int
+  userId    Int
+  canEdit   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  note      Note     @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([noteId, userId])
+}
+
+model EmailVerification {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}

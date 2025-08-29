@@ -1,27 +1,35 @@
 import { prisma } from "../utils/prisma.js";
 import { formatNote, formatNotes } from "../utils/noteFormatter.js";
 import { httpError } from "../utils/errorHandler.js";
+import { userCanViewNote, userCanEditNote } from "../utils/sharing.js";
+import { ok, created, noContentOk, fail } from "../utils/response.js";
 
 // GET /api/notes  ── list notes with search, sorting, and pagination
 export const getNotes = async (req, res, next) => {
   try {
-    /* ---------- pagination ---------- */
+    const userId = req.user.userId;
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.max(parseInt(req.query.limit) || 3, 1);
     const skip = (page - 1) * limit;
-
-    /* ---------- search filter ---------- */
     const search = req.query.search || "";
-    const where = search
-      ? {
-          OR: [
-            { title: { contains: search, mode: "insensitive" } },
-            { content: { contains: search, mode: "insensitive" } },
-          ],
-        }
-      : {};
-
-    /* ---------- sorting ---------- */
+    const where = {
+      OR: [
+        { userId },
+        {
+          shares: {
+            some: { userId },
+          },
+        },
+      ],
+      ...(search
+        ? {
+            OR: [
+              { title: { contains: search, mode: "insensitive" } },
+              { content: { contains: search, mode: "insensitive" } },
+            ],
+          }
+        : {}),
+    };
     let orderBy;
     switch (req.query.sort) {
       case "oldest":
@@ -38,17 +46,18 @@ export const getNotes = async (req, res, next) => {
         orderBy = { createdAt: "desc" };
         break;
     }
-
-    /* ---------- fetch paginated results + total count ---------- */
     const [notes, total] = await prisma.$transaction([
-      prisma.note.findMany({ where, orderBy, skip, take: limit }),
+      prisma.note.findMany({
+        where,
+        orderBy,
+        skip,
+        take: limit,
+        include: { user: { select: { name: true } } },
+      }),
       prisma.note.count({ where }),
     ]);
-
     const formatted = formatNotes(notes);
-
-    /* ---------- respond ---------- */
-    res.status(200).json({
+    return ok(res, {
       notes: formatted,
       pagination: {
         total,
@@ -63,17 +72,25 @@ export const getNotes = async (req, res, next) => {
 };
 
 export const createNote = async (req, res, next) => {
-  const { title, content, authorName = "Unknown", isPublic = true } = req.body;
+  const { title, content, isPublic = true } = req.body;
   try {
-    const created = await prisma.note.create({
+    // Infer authorName from the authenticated user
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      select: { name: true },
+    });
+    const authorName = user?.name?.trim() || "Unknown";
+    const newNote = await prisma.note.create({
       data: {
         title: title.trim(),
         content: content.trim(),
-        authorName,
         isPublic,
+        authorName,
+        userId: req.user.userId,
       },
+      include: { user: { select: { name: true } } },
     });
-    res.status(201).json(formatNote(created));
+    return created(res, formatNote(newNote));
   } catch (err) {
     next(err);
   }
@@ -81,11 +98,10 @@ export const createNote = async (req, res, next) => {
 
 export const getNoteById = async (req, res, next) => {
   try {
-    const note = await prisma.note.findUnique({
-      where: { id: Number(req.params.id) },
-    });
-    if (!note) return next(httpError("Note not found", 404, "NOT_FOUND"));
-    res.status(200).json(formatNote(note));
+    const noteId = Number(req.params.id);
+    const perm = await userCanViewNote(req.user.userId, noteId);
+    if (!perm.ok) return next(httpError("Note not found", 404, "NOT_FOUND"));
+    return ok(res, formatNote(perm.note));
   } catch (err) {
     next(err);
   }
@@ -93,20 +109,20 @@ export const getNoteById = async (req, res, next) => {
 
 export const updateNote = async (req, res, next) => {
   const noteId = Number(req.params.id);
-  const { title, content, authorName, isPublic } = req.body;
-
+  const { title, content, isPublic } = req.body;
   const data = {};
   if (title !== undefined) data.title = title;
   if (content !== undefined) data.content = content;
-  if (authorName !== undefined) data.authorName = authorName;
   if (isPublic !== undefined) data.isPublic = isPublic;
-
   try {
-    const existing = await prisma.note.findUnique({ where: { id: noteId } });
-    if (!existing) return next(httpError("Note not found", 404, "NOT_FOUND"));
-
-    const updated = await prisma.note.update({ where: { id: noteId }, data });
-    res.status(200).json(formatNote(updated));
+    const perm = await userCanEditNote(req.user.userId, noteId);
+    if (!perm.ok) return next(httpError("Note not found", 404, "NOT_FOUND"));
+    const updated = await prisma.note.update({
+      where: { id: noteId },
+      data,
+      include: { user: { select: { name: true } } },
+    });
+    return ok(res, formatNote(updated));
   } catch (err) {
     next(err);
   }
@@ -116,10 +132,60 @@ export const deleteNote = async (req, res, next) => {
   const noteId = Number(req.params.id);
   try {
     const existing = await prisma.note.findUnique({ where: { id: noteId } });
-    if (!existing) return next(httpError("Note not found", 404, "NOT_FOUND"));
+    if (!existing || existing.userId !== req.user.userId) {
+      return next(httpError("Note not found", 404, "NOT_FOUND"));
+    }
     await prisma.note.delete({ where: { id: noteId } });
-    res.status(204).send();
+    return noContentOk(res, "Note deleted.");
   } catch (err) {
+    next(err);
+  }
+};
+
+// POST /api/notes/:id/share  body: { userId, canEdit }
+export const shareNote = async (req, res, next) => {
+  const noteId = Number(req.params.id);
+  const { userId, canEdit = false } = req.body || {};
+  try {
+    const existing = await prisma.note.findUnique({ where: { id: noteId } });
+    if (!existing || existing.userId !== req.user.userId) {
+      return next(httpError("Note not found", 404, "NOT_FOUND"));
+    }
+    if (userId === req.user.userId) {
+      return fail(
+        res,
+        "Cannot share a note with yourself.",
+        400,
+        "BAD_REQUEST"
+      );
+    }
+    const share = await prisma.noteShare.upsert({
+      where: { noteId_userId: { noteId, userId } },
+      update: { canEdit },
+      create: { noteId, userId, canEdit },
+    });
+    return ok(res, { id: share.id, noteId, userId, canEdit: share.canEdit });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// DELETE /api/notes/:id/share/:userId
+export const unshareNote = async (req, res, next) => {
+  const noteId = Number(req.params.id);
+  const targetUserId = Number(req.params.userId);
+  try {
+    const existing = await prisma.note.findUnique({ where: { id: noteId } });
+    if (!existing || existing.userId !== req.user.userId) {
+      return next(httpError("Note not found", 404, "NOT_FOUND"));
+    }
+    await prisma.noteShare.delete({
+      where: { noteId_userId: { noteId, userId: targetUserId } },
+    });
+    return noContentOk(res, "Share removed.");
+  } catch (err) {
+    // if not found, still respond 204 (idempotent)
+    if (err?.code === "P2025") return noContentOk(res, "Share removed.");
     next(err);
   }
 };
