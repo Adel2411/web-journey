@@ -673,3 +673,20 @@ Errors
 - 400 INVALID_TOKEN: reset token invalid/expired
 
 ---
+
+### Auth-specific .env variables
+
+- JWT_SECRET — Secret for signing access JWTs. (required)
+- ACCESS_TOKEN_EXPIRES — Access token TTL (e.g., 15m, 1h). Default: 15m
+- REQUIRE_VERIFIED_EMAIL — true|false; if true, block login until verified. Default: false
+- MAX_LOGIN_ATTEMPTS — Failed login attempts before lockout. Default: 5
+- LOCKOUT_MINUTES — Lockout duration in minutes. Default: 15
+- VERIFY_TOKEN_TTL_MIN — Email verification token TTL (minutes). Default: 1440
+- INCLUDE_REFRESH_TOKEN_IN_RESPONSE — dev only; include refresh in JSON. Default: true in dev
+- INCLUDE_RESET_TOKEN_IN_RESPONSE — dev only; include reset token in JSON. Default: true in dev
+- APP_NAME — App name used in emails. Default: CollabNote
+- FRONTEND_URL — Base URL for email links. Default: http://localhost:5173
+- RESET_PATH — Frontend path for reset-password. Default: /reset-password
+- VERIFY_PATH — Frontend path for verify-email. Default: /verify-email
+- EMAIL_FROM — From address for emails. Default: no-reply@collabnote.local
+- SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS — SMTP config. If absent, emails use JSON transport (logged only).
