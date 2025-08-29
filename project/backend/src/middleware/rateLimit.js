@@ -1,4 +1,4 @@
-import rateLimit from "express-rate-limit";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 
 export function createRateLimiter({ windowMs, max, keyPrefix = "", message }) {
   return rateLimit({
@@ -8,21 +8,8 @@ export function createRateLimiter({ windowMs, max, keyPrefix = "", message }) {
     standardHeaders: true, // return rate limit info in standard headers
 
     keyGenerator: (req) => {
-      // Safely get IP address
-      let ip;
-
-      if (req.headers["x-forwarded-for"]) {
-        const forwarded = req.headers["x-forwarded-for"];
-        ip = Array.isArray(forwarded)
-          ? forwarded[0]
-          : forwarded.split(",")[0].trim();
-      } else {
-        ip = req.ip; // fallback
-      }
-
-      // Optional: make rate limit route-specific
+      const ip = ipKeyGenerator(req);
       const routeKey = `${req.method}:${req.baseUrl}${req.path}`;
-
       return `${keyPrefix}${ip}:${routeKey}`;
     },
 
