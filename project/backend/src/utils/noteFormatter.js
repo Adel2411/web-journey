@@ -4,7 +4,8 @@ export const formatNote = (note) => {
     id: note.id,
     title: note.title,
     content: note.content,
-    authorName: note.authorName,
+    // Prefer live user.name when available to reflect current profile name
+    authorName: note.user?.name ?? note.authorName,
     isPublic: note.isPublic,
     createdAt: note.createdAt?.toISOString(),
     updatedAt: note.updatedAt?.toISOString(),

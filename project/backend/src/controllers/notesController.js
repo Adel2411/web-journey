@@ -47,7 +47,13 @@ export const getNotes = async (req, res, next) => {
         break;
     }
     const [notes, total] = await prisma.$transaction([
-      prisma.note.findMany({ where, orderBy, skip, take: limit }),
+      prisma.note.findMany({
+        where,
+        orderBy,
+        skip,
+        take: limit,
+        include: { user: { select: { name: true } } },
+      }),
       prisma.note.count({ where }),
     ]);
     const formatted = formatNotes(notes);
@@ -66,19 +72,23 @@ export const getNotes = async (req, res, next) => {
 };
 
 export const createNote = async (req, res, next) => {
-  const { title, content, isPublic = true, authorName } = req.body;
+  const { title, content, isPublic = true } = req.body;
   try {
+    // Infer authorName from the authenticated user
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      select: { name: true },
+    });
+    const authorName = user?.name?.trim() || "Unknown";
     const newNote = await prisma.note.create({
       data: {
         title: title.trim(),
         content: content.trim(),
         isPublic,
-        // Only set authorName if provided; otherwise Prisma default remains
-        ...(authorName !== undefined
-          ? { authorName: String(authorName).trim() }
-          : {}),
+        authorName,
         userId: req.user.userId,
       },
+      include: { user: { select: { name: true } } },
     });
     return created(res, formatNote(newNote));
   } catch (err) {
@@ -99,16 +109,19 @@ export const getNoteById = async (req, res, next) => {
 
 export const updateNote = async (req, res, next) => {
   const noteId = Number(req.params.id);
-  const { title, content, isPublic, authorName } = req.body;
+  const { title, content, isPublic } = req.body;
   const data = {};
   if (title !== undefined) data.title = title;
   if (content !== undefined) data.content = content;
   if (isPublic !== undefined) data.isPublic = isPublic;
-  if (authorName !== undefined) data.authorName = String(authorName).trim();
   try {
     const perm = await userCanEditNote(req.user.userId, noteId);
     if (!perm.ok) return next(httpError("Note not found", 404, "NOT_FOUND"));
-    const updated = await prisma.note.update({ where: { id: noteId }, data });
+    const updated = await prisma.note.update({
+      where: { id: noteId },
+      data,
+      include: { user: { select: { name: true } } },
+    });
     return ok(res, formatNote(updated));
   } catch (err) {
     next(err);

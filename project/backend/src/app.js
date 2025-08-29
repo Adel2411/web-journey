@@ -6,6 +6,7 @@ import authRouter from "./routes/authRoute.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import { prisma } from "./utils/prisma.js";
 import { ok } from "./utils/response.js";
+import { sanitize } from "./middleware/sanitize.js";
 
 dotenv.config();
 
@@ -20,6 +21,8 @@ app.use(
   })
 );
 app.use(express.json());
+// Sanitize query/params/body after parsing JSON, before validators & controllers
+app.use(sanitize());
 
 // Routes
 app.get("/", (_, res) => ok(res, { message: "CollabNote API is running!" }));
