@@ -17,7 +17,7 @@ import { sendVerificationEmail } from "../utils/mailer.js";
 import { ok, created, fail, noContentOk } from "../utils/response.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES || "1h";
+const ACCESS_TOKEN_EXPIRES = process.env.ACCESS_TOKEN_EXPIRES || "15m";
 const INCLUDE_REFRESH_TOKEN_IN_RESPONSE =
   String(
     process.env.INCLUDE_REFRESH_TOKEN_IN_RESPONSE || "true"
