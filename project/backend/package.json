@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "node --watch src/app.js",
     "prisma:migrate": "prisma migrate dev",
-    "test": "node --test --test-reporter=spec",
-    "test:watch": "node --watch --test --test-reporter=spec"
+    "prisma:generate": "prisma generate"
   },
   "keywords": [],
   "author": "",

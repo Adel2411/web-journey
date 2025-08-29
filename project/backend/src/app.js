@@ -5,6 +5,7 @@ import notesRouter from "./routes/notesRoute.js";
 import authRouter from "./routes/authRoute.js";
 import { errorHandler } from "./utils/errorHandler.js";
 import { prisma } from "./utils/prisma.js";
+import { ok } from "./utils/response.js";
 
 dotenv.config();
 
@@ -21,9 +22,7 @@ app.use(
 app.use(express.json());
 
 // Routes
-app.get("/", (_, res) => {
-  res.json({ message: "CollabNote API is running!" });
-});
+app.get("/", (_, res) => ok(res, { message: "CollabNote API is running!" }));
 
 app.use("/api/auth", authRouter);
 app.use("/api/notes", notesRouter);
