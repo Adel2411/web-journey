@@ -2,6 +2,7 @@ import { prisma } from "../utils/prisma.js";
 import { formatNote, formatNotes } from "../utils/noteFormatter.js";
 import { httpError } from "../utils/errorHandler.js";
 import { userCanViewNote, userCanEditNote } from "../utils/sharing.js";
+import { ok, created, noContentOk, fail } from "../utils/response.js";
 
 // GET /api/notes  ── list notes with search, sorting, and pagination
 export const getNotes = async (req, res, next) => {
@@ -50,7 +51,7 @@ export const getNotes = async (req, res, next) => {
       prisma.note.count({ where }),
     ]);
     const formatted = formatNotes(notes);
-    res.status(200).json({
+    return ok(res, {
       notes: formatted,
       pagination: {
         total,
@@ -67,7 +68,7 @@ export const getNotes = async (req, res, next) => {
 export const createNote = async (req, res, next) => {
   const { title, content, isPublic = true, authorName } = req.body;
   try {
-    const created = await prisma.note.create({
+    const newNote = await prisma.note.create({
       data: {
         title: title.trim(),
         content: content.trim(),
@@ -79,7 +80,7 @@ export const createNote = async (req, res, next) => {
         userId: req.user.userId,
       },
     });
-    res.status(201).json(formatNote(created));
+    return created(res, formatNote(newNote));
   } catch (err) {
     next(err);
   }
@@ -90,7 +91,7 @@ export const getNoteById = async (req, res, next) => {
     const noteId = Number(req.params.id);
     const perm = await userCanViewNote(req.user.userId, noteId);
     if (!perm.ok) return next(httpError("Note not found", 404, "NOT_FOUND"));
-    res.status(200).json(formatNote(perm.note));
+    return ok(res, formatNote(perm.note));
   } catch (err) {
     next(err);
   }
@@ -108,7 +109,7 @@ export const updateNote = async (req, res, next) => {
     const perm = await userCanEditNote(req.user.userId, noteId);
     if (!perm.ok) return next(httpError("Note not found", 404, "NOT_FOUND"));
     const updated = await prisma.note.update({ where: { id: noteId }, data });
-    res.status(200).json(formatNote(updated));
+    return ok(res, formatNote(updated));
   } catch (err) {
     next(err);
   }
@@ -122,7 +123,7 @@ export const deleteNote = async (req, res, next) => {
       return next(httpError("Note not found", 404, "NOT_FOUND"));
     }
     await prisma.note.delete({ where: { id: noteId } });
-    res.status(204).send();
+    return noContentOk(res, "Note deleted.");
   } catch (err) {
     next(err);
   }
@@ -138,18 +139,19 @@ export const shareNote = async (req, res, next) => {
       return next(httpError("Note not found", 404, "NOT_FOUND"));
     }
     if (userId === req.user.userId) {
-      return res
-        .status(400)
-        .json({ error: "Cannot share a note with yourself." });
+      return fail(
+        res,
+        "Cannot share a note with yourself.",
+        400,
+        "BAD_REQUEST"
+      );
     }
     const share = await prisma.noteShare.upsert({
       where: { noteId_userId: { noteId, userId } },
       update: { canEdit },
       create: { noteId, userId, canEdit },
     });
-    res
-      .status(200)
-      .json({ id: share.id, noteId, userId, canEdit: share.canEdit });
+    return ok(res, { id: share.id, noteId, userId, canEdit: share.canEdit });
   } catch (err) {
     next(err);
   }
@@ -167,10 +169,10 @@ export const unshareNote = async (req, res, next) => {
     await prisma.noteShare.delete({
       where: { noteId_userId: { noteId, userId: targetUserId } },
     });
-    res.status(204).send();
+    return noContentOk(res, "Share removed.");
   } catch (err) {
     // if not found, still respond 204 (idempotent)
-    if (err?.code === "P2025") return res.status(204).send();
+    if (err?.code === "P2025") return noContentOk(res, "Share removed.");
     next(err);
   }
 };

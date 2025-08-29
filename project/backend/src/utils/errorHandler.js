@@ -1,4 +1,5 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { fail } from "./response.js";
 
 // Global error-handling middleware
 export const errorHandler = (error, req, res, next) => {
@@ -8,35 +9,20 @@ export const errorHandler = (error, req, res, next) => {
   if (error instanceof PrismaClientKnownRequestError) {
     switch (error.code) {
       case "P2002": // Unique constraint failed
-        return res.status(409).json({
-          success: false,
-          message: "Note already exists",
-          code: error.code,
-        });
+        return fail(res, "Note already exists", 409, error.code);
 
       case "P2025": // Record not found
-        return res.status(404).json({
-          success: false,
-          message: "Note not found",
-          code: error.code,
-        });
+        return fail(res, "Note not found", 404, error.code);
     }
   }
 
   // Custom thrown app errors via httpError()
   if (error.statusCode) {
-    return res.status(error.statusCode).json({
-      success: false,
-      message: error.message,
-      code: error.code || undefined,
-    });
+    return fail(res, error.message, error.statusCode, error.code || undefined);
   }
 
   // Unknown / unexpected errors
-  return res.status(500).json({
-    success: false,
-    message: error.message || "Internal server error",
-  });
+  return fail(res, error.message || "Internal server error", 500);
 };
 
 // throw custom errors

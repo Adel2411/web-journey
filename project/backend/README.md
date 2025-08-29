@@ -366,9 +366,41 @@ Screenshots of each test are saved under `./screenshots/`
 
 # 🏆 Backend Challenge 2 — Solution Documentation JWT Authentication & User Management
 
+## How it works (TL;DR)
+
+- Register
+
+  - Validates input (email, strong password, match confirmPassword, optional name/age/role).
+  - Creates the user with a hashed password and issues tokens (short‑lived access JWT + long‑lived refresh token stored in DB).
+  - Sends a verification email with a time‑limited token. If `REQUIRE_VERIFIED_EMAIL=true`, login is blocked until verified.
+
+- Login
+
+  - Checks credentials, account lockout, and optionally email verification.
+  - Returns the same response shape as register: `{ message, data: { user, token, accessTokenExpiresIn, refreshToken, refreshTokenExpiresAt } }`.
+
+- Forgot/Reset password
+
+  - `/forgot-password` creates a one‑time, expiring reset token and sends it via email (in dev, it may be included in the response when `INCLUDE_RESET_TOKEN_IN_RESPONSE=true`).
+  - `/reset-password` validates the token and sets the new password.
+
+- flow to reset password:
+
+-> Trigger a reset (forgot) with your email
+-> Get the reset token (from response in dev or from email/logs)
+-> Submit the new password with the token
+-> Log in with the new password
+
+- Tokens (Access vs Refresh)
+  - Access token: JWT used in `Authorization: Bearer <token>`, short‑lived; expose `accessTokenExpiresIn` (seconds) in responses.
+  - Refresh token: opaque, persisted in DB, longer‑lived; rotate on `/refresh`, revoke on `/logout`, and revoke all on `/logout-all`.
+  - Storage guidance: keep access token in memory; prefer HTTP‑only secure cookie for refresh token (or handle it strictly on the server side). Avoid storing refresh tokens in `localStorage`.
+
+Auth endpoints are rate‑limited and consistently return structured JSON with clear error codes.
+
 ## Response Form
 
-- Success: `{ success: true, message?: string, data?: any }` (for some endpoints we return only `{ message, data }`)
+- Success: `{ success: true, message?: string, data?: any }`
 - Error: `{ success: false, error: { code: string, message: string, details?: any }, status: number, requestId?: string }`
 
 Typical error codes: `VALIDATION_ERROR`, `UNAUTHENTICATED`, `INVALID_TOKEN`, `FORBIDDEN`, `NOT_FOUND`, `CONFLICT`, `LOCKED`, `RATE_LIMITED`, `INTERNAL_ERROR`.
@@ -396,6 +428,7 @@ Response
 
 ```json
 {
+  "success": true,
   "message": "User registered successfully. Please verify your email.",
   "data": {
     "user": {
@@ -434,6 +467,7 @@ Response
 
 ```json
 {
+  "success": true,
   "message": "Login successful",
   "data": {
     "user": {
@@ -473,6 +507,7 @@ Response
 
 ```json
 {
+  "success": true,
   "token": "<new-access-jwt>",
   "accessTokenExpiresIn": 3600,
   "refreshToken": "<rotated-refresh-token>",
@@ -497,7 +532,11 @@ Body (one of)
 { "refreshToken": "<refresh-token>" }
 ```
 
-Response: `204 No Content`
+Response
+
+```json
+{ "success": true, "message": "Logged out successfully." }
+```
 
 ---
 
@@ -511,7 +550,11 @@ Headers
 Authorization: Bearer <access-jwt>
 ```
 
-Response: `204 No Content`
+Response
+
+```json
+{ "success": true, "message": "Logged out from all devices." }
+```
 
 Errors
 
@@ -531,7 +574,7 @@ Usage
 Response
 
 ```json
-{ "message": "Email verified successfully." }
+{ "success": true, "message": "Email verified successfully." }
 ```
 
 Errors
@@ -553,8 +596,8 @@ Body
 
 Response
 
-- Default (dev): `{ "message": "Reset token generated.", "token": "<reset-token>", "expiresAt": "..." }` when `INCLUDE_RESET_TOKEN_IN_RESPONSE=true`
-- Otherwise: `{ "message": "If that email exists, a reset link has been sent." }`
+- Default (dev): `{ "success": true, "message": "Reset token generated.", "token": "<reset-token>", "expiresAt": "..." }` when `INCLUDE_RESET_TOKEN_IN_RESPONSE=true`
+- Otherwise: `{ "success": true, "message": "If that email exists, a reset link has been sent." }`
 
 ---
 
@@ -565,17 +608,13 @@ Resets the password using the reset token.
 Body
 
 ```json
-{
-  "token": "<reset-token>",
-  "password": "NewStrongPass123",
-  "confirmPassword": "NewStrongPass123"
-}
+s
 ```
 
 Response
 
 ```json
-{ "message": "Password has been reset." }
+{ "success": true, "message": "Password has been reset." }
 ```
 
 Errors

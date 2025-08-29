@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { noteCreationValidation } from "../utils/noteValidator.js";
+import { fail } from "../utils/response.js";
 
 // CREATE-note validation middleware
 export const createNoteValidator = (req, res, next) => {
@@ -8,11 +9,13 @@ export const createNoteValidator = (req, res, next) => {
     next();
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({
-        success: false,
-        message: "Create Note validation failed",
-        errors: error.flatten().fieldErrors,
-      });
+      return fail(
+        res,
+        "Create Note validation failed",
+        400,
+        "VALIDATION_ERROR",
+        { errors: error.flatten().fieldErrors }
+      );
     }
     next(error);
   }
@@ -21,9 +24,7 @@ export const createNoteValidator = (req, res, next) => {
 // UPDATE-note validation middleware
 export const updateNoteValidator = (req, res, next) => {
   if (!req.body || typeof req.body !== "object") {
-    return res.status(400).json({
-      success: false,
-      message: "Update Note validation failed",
+    return fail(res, "Update Note validation failed", 400, "VALIDATION_ERROR", {
       errors: { general: ["Request body is missing or invalid"] },
     });
   }
@@ -45,13 +46,16 @@ export const updateNoteValidator = (req, res, next) => {
           e.path.length === 0 &&
           e.message === "At least one field must be provided for update"
       );
-      return res.status(400).json({
-        success: false,
-        message: "Update Note validation failed",
-        errors: hasNoFieldsError
-          ? { general: ["At least one field must be provided for update"] }
-          : error.flatten().fieldErrors,
-      });
+      const errors = hasNoFieldsError
+        ? { general: ["At least one field must be provided for update"] }
+        : error.flatten().fieldErrors;
+      return fail(
+        res,
+        "Update Note validation failed",
+        400,
+        "VALIDATION_ERROR",
+        { errors }
+      );
     }
     next(error);
   }
@@ -61,9 +65,7 @@ export const updateNoteValidator = (req, res, next) => {
 export const validateNoteId = (req, res, next) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id) || id <= 0) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid note ID",
+    return fail(res, "Invalid note ID", 400, "VALIDATION_ERROR", {
       errors: { id: ["Note ID must be a positive integer"] },
     });
   }
@@ -79,11 +81,13 @@ export const validateShareBody = (req, res, next) => {
   try {
     const parsed = schema.safeParse(req.body ?? {});
     if (!parsed.success) {
-      return res.status(400).json({
-        success: false,
-        message: "Share Note validation failed",
-        errors: parsed.error.flatten().fieldErrors,
-      });
+      return fail(
+        res,
+        "Share Note validation failed",
+        400,
+        "VALIDATION_ERROR",
+        { errors: parsed.error.flatten().fieldErrors }
+      );
     }
     req.body = parsed.data;
     next();

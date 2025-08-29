@@ -6,6 +6,7 @@ import {
   consumeResetToken,
 } from "../utils/passwordReset.js";
 import { sendPasswordResetEmail } from "../utils/mailer.js";
+import { ok, fail } from "../utils/response.js";
 
 // POST /api/auth/forgot-password
 export async function forgotPasswordController(req, res) {
@@ -13,7 +14,7 @@ export async function forgotPasswordController(req, res) {
   const user = await prisma.user.findUnique({ where: { email } });
   // Respond 200 even if not found to avoid account enumeration
   if (!user)
-    return res.json({
+    return ok(res, {
       message: "If that email exists, a reset link has been sent.",
     });
 
@@ -24,7 +25,6 @@ export async function forgotPasswordController(req, res) {
     await sendPasswordResetEmail({ to: email, token, user });
   } catch (e) {
     console.error("Failed to send reset email:", e);
-    // Do not reveal email issues to client; continue non-enumeration response
   }
 
   // For development/testing convenience, return token when explicitly allowed
@@ -33,16 +33,18 @@ export async function forgotPasswordController(req, res) {
       process.env.INCLUDE_RESET_TOKEN_IN_RESPONSE || "true"
     ).toLowerCase() === "true";
   if (includeToken) {
-    return res.json({ message: "Reset token generated.", token, expiresAt });
+    return ok(res, { message: "Reset token generated.", token, expiresAt });
   }
-  res.json({ message: "If that email exists, a reset link has been sent." });
+  return ok(res, {
+    message: "If that email exists, a reset link has been sent.",
+  });
 }
 
 // POST /api/auth/reset-password
 export async function resetPasswordController(req, res) {
   const { token, password } = req.body || {};
   const rec = await verifyResetToken(token);
-  if (!rec) return res.status(400).json({ error: "Invalid or expired token." });
+  if (!rec) return fail(res, "Invalid or expired token.", 400, "INVALID_TOKEN");
 
   const hashed = await bcrypt.hash(password, 10);
   await prisma.user.update({
@@ -50,5 +52,5 @@ export async function resetPasswordController(req, res) {
     data: { password: hashed },
   });
   await consumeResetToken(token);
-  res.json({ message: "Password has been reset." });
+  return ok(res, { message: "Password has been reset." });
 }
