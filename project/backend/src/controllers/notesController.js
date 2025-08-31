@@ -30,6 +30,7 @@ export const getNotes = async (req, res, next) => {
           }
         : {}),
     };
+
     let orderBy;
     switch (req.query.sort) {
       case "oldest":

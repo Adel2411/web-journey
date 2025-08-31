@@ -23,12 +23,14 @@ const INCLUDE_REFRESH_TOKEN_IN_RESPONSE =
     process.env.INCLUDE_REFRESH_TOKEN_IN_RESPONSE || "true"
   ).toLowerCase() === "true";
 
+//Utility function to issue access tokens JWT
 function issueAccessToken(userId, role) {
   return jwt.sign({ userId, role }, JWT_SECRET, {
     expiresIn: ACCESS_TOKEN_EXPIRES,
   });
 }
 
+// Parse duration strings like "15m", "1h", "2d" into seconds
 function parseExpiresToSeconds(input) {
   if (typeof input === "number") return input;
   const str = String(input || "").trim();
@@ -49,13 +51,16 @@ function parseExpiresToSeconds(input) {
   return n * mult;
 }
 
+// Register a new user
 export const registerController = async (req, res) => {
   const { email, password, confirmPassword, name, age, role } = req.body;
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
     return fail(res, "Email already registered.", 409, "CONFLICT");
   }
+  // Hash the password
   const hashedPassword = await bcrypt.hash(password, 10);
+  // Create the user
   const user = await prisma.user.create({
     data: {
       email,
@@ -108,6 +113,7 @@ export const loginController = async (req, res) => {
   const REQUIRE_VERIFIED =
     String(process.env.REQUIRE_VERIFIED_EMAIL || "false").toLowerCase() ===
     "true";
+  // If email verification is required, check if the user is verified
   if (REQUIRE_VERIFIED && !user.isVerified) {
     return fail(
       res,
@@ -126,7 +132,9 @@ export const loginController = async (req, res) => {
       "LOCKED"
     );
   }
+  // Verify password
   const valid = await bcrypt.compare(password, user.password);
+  // If password is invalid, increment failed login attempts
   if (!valid) {
     const attempts = (user.failedLoginAttempts ?? 0) + 1;
     let data = { failedLoginAttempts: attempts };
@@ -170,6 +178,7 @@ export const loginController = async (req, res) => {
   return ok(res, body);
 };
 
+// Refresh Token
 export const refreshTokenController = async (req, res) => {
   const token = req.body?.refreshToken || req.cookies?.refreshToken;
   if (!token) return fail(res, "refreshToken is required.", 400, "BAD_REQUEST");
@@ -193,6 +202,7 @@ export const refreshTokenController = async (req, res) => {
   return ok(res, body);
 };
 
+// Verify Email
 export const verifyEmailController = async (req, res) => {
   const token = req.query?.token || req.body?.token;
   if (!token) return fail(res, "token is required", 400, "BAD_REQUEST");
@@ -206,12 +216,14 @@ export const verifyEmailController = async (req, res) => {
   return ok(res, { message: "Email verified successfully." });
 };
 
+// Logout
 export const logoutController = async (req, res) => {
   const token = req.body?.refreshToken || req.cookies?.refreshToken;
   if (token) await revokeRefreshToken(token);
   return noContentOk(res, "Logged out successfully.");
 };
 
+// Logout from all devices
 export const logoutAllController = async (req, res) => {
   // Requires auth; if not authenticated, return 401
   const auth = req.headers.authorization || "";

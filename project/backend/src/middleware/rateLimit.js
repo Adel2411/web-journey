@@ -1,5 +1,6 @@
 import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 
+// Create a rate limiter middleware
 export function createRateLimiter({ windowMs, max, keyPrefix = "", message }) {
   return rateLimit({
     windowMs,
@@ -7,6 +8,7 @@ export function createRateLimiter({ windowMs, max, keyPrefix = "", message }) {
     legacyHeaders: false, // disable deprecated headers
     standardHeaders: true, // return rate limit info in standard headers
 
+    // Generate a unique key for each request
     keyGenerator: (req) => {
       const ip = ipKeyGenerator(req);
       const routeKey = `${req.method}:${req.baseUrl}${req.path}`;

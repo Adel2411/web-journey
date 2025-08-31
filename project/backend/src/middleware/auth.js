@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { fail } from "../utils/response.js";
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
+// Middleware to authenticate requests using JWT
 export function authenticate(req, res, next) {
   const authHeader = req.headers["authorization"];
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -10,6 +10,7 @@ export function authenticate(req, res, next) {
   }
   const token = authHeader.split(" ")[1];
   try {
+    // Verify the token
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     next();
@@ -18,8 +19,10 @@ export function authenticate(req, res, next) {
   }
 }
 
+// Middleware to authorize users based on roles
 export function authorize(...allowedRoles) {
   return (req, res, next) => {
+    // Check if user role is present
     if (!req.user?.role) return fail(res, "Forbidden.", 403, "FORBIDDEN");
     if (!allowedRoles.includes(req.user.role)) {
       return fail(res, "Forbidden.", 403, "FORBIDDEN");

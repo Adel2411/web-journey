@@ -1,6 +1,39 @@
 import { z } from "zod";
-import { noteCreationValidation } from "../utils/noteValidator.js";
 import { fail } from "../utils/response.js";
+
+// Note schema (moved from utils/noteValidator.js)
+const MIN_TITLE_LENGTH = 3;
+const MAX_TITLE_LENGTH = 100;
+const MIN_CONTENT_LENGTH = 10;
+const MAX_CONTENT_LENGTH = 1000;
+
+const noteCreationValidation = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(
+      MIN_TITLE_LENGTH,
+      `Title must be at least ${MIN_TITLE_LENGTH} characters long`
+    )
+    .max(
+      MAX_TITLE_LENGTH,
+      `Title must be at most ${MAX_TITLE_LENGTH} characters long`
+    ),
+
+  content: z
+    .string()
+    .trim()
+    .min(
+      MIN_CONTENT_LENGTH,
+      `Content must be at least ${MIN_CONTENT_LENGTH} characters long`
+    )
+    .max(
+      MAX_CONTENT_LENGTH,
+      `Content must be at most ${MAX_CONTENT_LENGTH} characters long`
+    ),
+
+  isPublic: z.boolean().optional(),
+});
 
 // CREATE-note validation middleware
 export const createNoteValidator = (req, res, next) => {
@@ -95,3 +128,6 @@ export const validateShareBody = (req, res, next) => {
     next(err);
   }
 };
+
+// Optional: export schema for reuse in tests or other modules
+export { noteCreationValidation };

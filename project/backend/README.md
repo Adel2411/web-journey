@@ -19,7 +19,7 @@ project/backend/
 │   ├── utils/
 │   │   ├── errorHandler.js
 │   │   ├── noteFormatter.js
-│   │   ├── noteValidator.js
+│   │   ├── noteFormatter.js
 │   │   └── prisma.js
 │   └── app.js
 ├── .env
@@ -208,7 +208,7 @@ import {
   createNoteValidator,
   updateNoteValidator,
   validateNoteId,
-} from "../utils/noteValidator.js";
+} from "../middleware/validateNote.js";
 
 const router = express.Router();
 
@@ -225,7 +225,7 @@ export default router;
 
 ## 📃 Note Validation with Zod
 
-Validation logic is handled using `Zod`, located in `utils/noteValidator.js`. It ensures clean and safe input for both creation and update operations.
+Validation logic is handled using `Zod`, now colocated in `middleware/validateNote.js`. It ensures clean and safe input for both creation and update operations.
 
 ### 📁 Create Note Validation
 

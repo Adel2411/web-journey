@@ -1,15 +1,14 @@
-// middleware/sanitize.js
 import xss from "xss";
-
+// Default options for sanitization
 const DEFAULT_OPTS = {
   whiteList: {}, // by default allow NO tags
   stripIgnoreTag: true,
   stripIgnoreTagBody: ["script", "style"],
   maxStringLength: 10000, // optional length limiter
 };
-
+// Keys that are considered dangerous and should be sanitized
 const POLLUTION_KEYS = new Set(["__proto__", "prototype", "constructor"]);
-
+// Sanitize a single value
 function sanitizeValue(val, opts, maxLen) {
   if (val == null) return val;
 
@@ -40,6 +39,7 @@ function sanitizeValue(val, opts, maxLen) {
   return val;
 }
 
+// Sanitize the request
 export function sanitize(options = {}) {
   const opts = { ...DEFAULT_OPTS, ...options };
   const maxLen = opts.maxStringLength;

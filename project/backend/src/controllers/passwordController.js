@@ -4,7 +4,7 @@ import {
   createResetToken,
   verifyResetToken,
   consumeResetToken,
-} from "../utils/passwordReset.js";
+} from "../utils/passwordResetToken.js";
 import { sendPasswordResetEmail } from "../utils/mailer.js";
 import { ok, fail } from "../utils/response.js";
 
@@ -47,6 +47,7 @@ export async function resetPasswordController(req, res) {
   if (!rec) return fail(res, "Invalid or expired token.", 400, "INVALID_TOKEN");
 
   const hashed = await bcrypt.hash(password, 10);
+  // Update the user's password
   await prisma.user.update({
     where: { id: rec.userId },
     data: { password: hashed },

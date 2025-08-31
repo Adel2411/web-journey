@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { prisma } from "./prisma.js";
 
+// Create a new refresh token
 export async function createRefreshToken(userId, ttlDays = 30) {
   // revoke existing tokens optionally? We'll allow multiple sessions.
   const token = crypto.randomBytes(32).toString("hex");
@@ -11,6 +12,7 @@ export async function createRefreshToken(userId, ttlDays = 30) {
   return { token, expiresAt };
 }
 
+// Verify the refresh token
 export async function verifyRefreshToken(token) {
   const rec = await prisma.refreshToken.findUnique({ where: { token } });
   if (!rec) return null;
@@ -47,6 +49,7 @@ export async function revokeRefreshToken(token) {
   }
 }
 
+// Revoke all refresh tokens for a user
 export async function revokeAllRefreshTokensForUser(userId) {
   await prisma.refreshToken.deleteMany({ where: { userId } });
 }
