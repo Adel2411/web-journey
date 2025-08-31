@@ -12,7 +12,7 @@ import {
   createVerificationToken,
   verifyVerificationToken,
   consumeVerificationToken,
-} from "../utils/emailVerification.js";
+} from "../utils/emailVerificationToken.js";
 import { sendVerificationEmail } from "../utils/mailer.js";
 import { ok, created, fail, noContentOk } from "../utils/response.js";
 

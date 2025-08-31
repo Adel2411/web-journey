@@ -1,5 +1,5 @@
 # CollabNote API end-to-end test (PowerShell)
-# Usage: powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Users\user\Desktop\web-challenges\project\backend\scripts\test-api.ps1"
+# Usage: powershell -NoProfile -ExecutionPolicy Bypass -File "{path}/web-challenges/project/backend/scripts/test-api.ps1"
 
 Param(
   [string]$BaseUrl = "http://localhost:5000/api"
