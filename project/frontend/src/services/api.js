@@ -20,10 +20,17 @@ export const authFetch = async (url, options = {}, token) => {
             throw new Error("Unauthorized - please login again");
         }
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Request failed");
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch {
+            data = text;
+        }
 
+        if (!res.ok) throw new Error(data?.message || data || "Request failed");
         return data;
+
     } catch (error) {
         throw new Error(error.message || "Network error occurred");
     }
