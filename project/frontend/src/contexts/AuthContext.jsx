@@ -31,6 +31,9 @@ export const AuthProvider = ({ children }) => {
 
         } catch(err) {
             return { success: false, message: err.message };
+
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -42,8 +45,12 @@ export const AuthProvider = ({ children }) => {
             localStorage.setItem("token", response.token);
             setUser(response.user);
             return { success: true }
+
         } catch (err) {
             return { success: false, message: err.message };
+
+        } finally {
+            setLoading(false);
         }
     }
 

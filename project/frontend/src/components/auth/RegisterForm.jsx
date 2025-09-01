@@ -39,7 +39,7 @@ export const RegisterForm = ({ onClose, onSwitchToLogin }) => {
             const res = await register(formData);
             
             if (!res.success) {
-                setError(res.error);
+                setError(res.message);
             } else {
                 // Close modal and navigate
                 onClose?.();

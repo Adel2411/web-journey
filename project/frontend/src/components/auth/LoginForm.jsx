@@ -21,7 +21,7 @@ export const LoginForm = ({ onClose, onSwitchToRegister }) => {
             );
             
             if (!res.success) {
-                setError(res.error);
+                setError(res.message);
             } else {
                 // Close modal and navigate
                 onClose?.();
