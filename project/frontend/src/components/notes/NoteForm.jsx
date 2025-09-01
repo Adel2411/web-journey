@@ -11,12 +11,13 @@ export const NoteForm = ({
 
     const [title, setTitle] = useState(initialData.title);
     const [content, setContent] = useState(initialData.content);
-    const [isPublic, setIsPublic] = useState(initialData.isPublic)
+    const [isPublic, setIsPublic] = useState(initialData.isPublic);
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        onSubmit({ title, content, isPublic });
+        e.preventDefault(); 
+        onSubmit({ title, content, isPublic }); 
     };
+
 
     return (
         <>

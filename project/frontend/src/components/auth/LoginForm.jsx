@@ -1,10 +1,8 @@
 import { useContext, useState } from "react"
 import { AuthContext } from "../../contexts/AuthContext"
-import { useNavigate } from "react-router-dom";
 
-export const LoginForm = ({ onClose, onSwitchToRegister }) => {
+export const LoginForm = ({ onClose, onSwitchToRegister, onAuthSuccess }) => {
     const { login, loading } = useContext(AuthContext);
-    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -15,17 +13,13 @@ export const LoginForm = ({ onClose, onSwitchToRegister }) => {
         setError("");
 
         try {
-            const res = await login(
-                email, 
-                password
-            );
+            const res = await login(email, password);
             
             if (!res.success) {
                 setError(res.message);
             } else {
-                // Close modal and navigate
+                onAuthSuccess?.();
                 onClose?.();
-                navigate("/notes");
             }
         } catch (err) {
             setError(err.message || "Something went wrong. Please try again.");

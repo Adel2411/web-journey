@@ -2,15 +2,16 @@ import "./App.css";
 import Header from "./components/layout/Header";
 import NoteList from "./components/notes/NoteList";
 import { AuthLayout } from "./components/auth/AuthLayout";
-import { useState, useEffect } from "react";
-import { isTokenExpired, decodeJWT } from "./utils/auth";
+import { useState, useContext, useEffect } from "react";
+import { AuthContext } from "./contexts/AuthContext";
 
 const App = () => {
-  const [showLogin, setShowLogin] = useState(false);
+  const { user, logout, loading } = useContext(AuthContext);
+  const isAuthenticated = !!user;
+  
+  const [showLogin, setShowLogin] = useState(!isAuthenticated);
   const [showRegister, setShowRegister] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   const closeModal = () => {
     setShowLogin(false);
@@ -28,83 +29,33 @@ const App = () => {
   };
 
   const handleSignOut = () => {
-    try {
-      localStorage.removeItem("token");
-      setIsAuthenticated(false);
-      setUser(null);
-      closeModal();
-    } catch (error) {
-      console.error("Error during sign out:", error);
-    }
+    logout();
+    setShowWelcome(false);
+    setShowLogin(true);
+    closeModal();
   };
 
-  const handleAuthSuccess = (userData, token) => {
-    try {
-      localStorage.setItem("token", token);
-      setUser(userData);
-      setIsAuthenticated(true);
-      closeModal();
-    } catch (error) {
-      console.error("Error saving authentication:", error);
-    }
+  const handleAuthSuccess = () => {
+    setShowWelcome(true);
+    closeModal();
+    
+    // Hide welcome message after 4 seconds
+    setTimeout(() => {
+      setShowWelcome(false);
+    }, 4000);
   };
 
-  // Check authentication on app load
   useEffect(() => {
-    const checkAuth = () => {
-      try {
-        const token = localStorage.getItem("token");
-        
-        if (token && token.trim() !== "" && token !== "null" && token !== "undefined") {
-
-          // Check if token is expired
-          if (isTokenExpired(token)) {
-            localStorage.removeItem("token");
-            setIsAuthenticated(false);
-            setUser(null);
-            setShowLogin(true);
-            return;
-          }
-
-          const userData = decodeJWT(token);
-          
-          if (userData) {
-            const userInfo = {
-              id: userData.id || userData.userId || userData.sub,
-              name: userData.name || userData.username || `${userData.firstName} ${userData.lastName}` || "User",
-              email: userData.email,
-              initials: (userData.name || userData.username || "UN").split(' ').map(n => n[0]).join('').toUpperCase()
-            };
-            
-            setUser(userInfo);
-            setIsAuthenticated(true);
-            
-          } else {
-            localStorage.removeItem("token");
-            setIsAuthenticated(false);
-            setUser(null);
-            setShowLogin(true);
-          }
-        } else {
-          setIsAuthenticated(false);
-          setUser(null);
-          setShowLogin(true);
-        }
-      } catch (error) {
-        console.error("Error checking authentication:", error);
-        setIsAuthenticated(false);
-        setUser(null);
-        setShowLogin(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
+    if (isAuthenticated) {
+      setShowLogin(false);
+      setShowRegister(false);
+    } else {
+      setShowLogin(true);
+    }
+  }, [isAuthenticated]);
 
   // Loading state
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="bg-[#0e0e1b] min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -137,10 +88,14 @@ const App = () => {
         />
       ) : (
         <main className="max-w-6xl w-full mx-auto px-4 sm:px-6 md:px-8 py-8">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-white mb-2">Welcome back, {user?.name}!</h1>
-            <p className="text-gray-400">Manage your notes and collaborate with others.</p>
-          </div>
+          {/* Conditional welcome message with fade animation */}
+          {showWelcome && (
+            <div className="mb-6 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-xl p-4 transition-all duration-500 ease-in-out">
+              <h1 className="text-2xl font-bold text-white mb-1">Welcome back, {user?.name}!</h1>
+              <p className="text-gray-300">Manage your notes and collaborate with others.</p>
+            </div>
+          )}
+          
           <NoteList />
         </main>
       )}

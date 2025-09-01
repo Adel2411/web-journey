@@ -55,29 +55,22 @@ const NoteItem = ({
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleEditSubmit = async (e) => {
-    e.preventDefault();
+  const handleEditSubmit = async ({ title, content, isPublic }) => {
     setIsUpdating(true);
 
     try {
       const token = localStorage.getItem("token");
       const updatedNote = await updateNote(
         note.id,
-        {
-          title: editTitle,
-          content: editContent,
-          isPublic: editIsPublic,
-        },
+        { title, content, isPublic },
         token
       );
 
       setEditModal(false);
       closeMenu();
 
-      // Call parent callback to update the note list
-      if (onNoteUpdated) {
-        onNoteUpdated(updatedNote);
-      }
+      // Notify parent to update list
+      if (onNoteUpdated) onNoteUpdated(updatedNote.note || updatedNote);
     } catch (error) {
       console.error("Failed to update note:", error);
       alert("Failed to update note. Please try again.");
@@ -85,6 +78,7 @@ const NoteItem = ({
       setIsUpdating(false);
     }
   };
+
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -130,25 +124,26 @@ const NoteItem = ({
     <>
       {/* Edit Modal */}
       {editModal && (
-        <NoteForm 
-           mode = "edit"
-           initialData={{
-            title : note.title,
-            content : note.content,
-            isPublic : note.isPublic
-          }}
-          onSubmit={handleEditSubmit}
-          onCancel={cancelEdit}
-          loading={isUpdating}
-        />
-      )}
+      <NoteForm
+        mode="edit"
+        initialData={{
+          title: note.title,
+          content: note.content,
+          isPublic: note.isPublic
+        }}
+        onSubmit={handleEditSubmit}  
+        onCancel={cancelEdit}
+        loading={isUpdating}
+      />
+    )}
+
 
       {/* Note Card */}
       <div
         className="bg-[#20202f] text-white rounded-2xl border border-transparent hover:border-blue-500 shadow-lg hover:shadow-[0_4px_24px_rgba(59,130,246,0.4)] hover:bg-[#2a2a3f] hover:scale-[1.015] hover:-translate-y-1 transition-all duration-300 ease-in-out p-5 flex flex-col min-h-[260px] relative"
         onMouseLeave={closeMenu}
       >
-        {/* Small Delete Confirmation - stays small */}
+        {/*Delete Confirmation*/}
         {showDeleteConfirm && (
           <div className="absolute top-2 right-2 bg-[#2a2a3a] border border-red-500/50 rounded-lg p-3 z-30 shadow-lg min-w-[200px]">
             <div className="text-center">

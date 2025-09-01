@@ -20,7 +20,7 @@ export const AuthLayout = ({
 
         if (showLogin || showRegister) {
         document.addEventListener('keydown', handleEscape);
-        document.body.style.overflow = 'hidden'; // Prevent background scroll
+        document.body.style.overflow = 'hidden'; 
         }
 
         return () => {

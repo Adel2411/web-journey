@@ -1,10 +1,8 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 
-export const RegisterForm = ({ onClose, onSwitchToLogin }) => {
+export const RegisterForm = ({ onClose, onSwitchToLogin, onAuthSuccess }) => {
     const { register, loading } = useContext(AuthContext);
-    const navigate = useNavigate();
     
     const [formData, setFormData] = useState({
         email: "",
@@ -12,11 +10,10 @@ export const RegisterForm = ({ onClose, onSwitchToLogin }) => {
         confirmPassword: "",
         name: "",
         age: "",
-        role: "user" //Default
+        role: "USER" //Default
     });
     
     const [error, setError] = useState("");
-
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -24,8 +21,7 @@ export const RegisterForm = ({ onClose, onSwitchToLogin }) => {
             ...prev,
             [name]: value
         }));
-        
-        // Clear error when user starts typing
+    
         if (error) {
             setError("");
         }
@@ -41,9 +37,8 @@ export const RegisterForm = ({ onClose, onSwitchToLogin }) => {
             if (!res.success) {
                 setError(res.message);
             } else {
-                // Close modal and navigate
+                onAuthSuccess?.();
                 onClose?.();
-                navigate("/notes");
             }
         } catch (err) {
             setError(err.message || "Something went wrong. Please try again.");
@@ -145,8 +140,8 @@ export const RegisterForm = ({ onClose, onSwitchToLogin }) => {
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-[#2a2a3a] border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition-colors"
                 >
-                    <option value="user">User</option>
-                    <option value="admin">Admin</option>
+                    <option value="USER">USER</option>
+                    <option value="ADMIN">ADMIN</option>
                 </select>
             </div>
 
