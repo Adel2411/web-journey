@@ -11,7 +11,7 @@ const Header = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const UserAvatar = () => (
-    <div className="relative hidden md:group">
+    <div className="relative group">
       <button className="flex items-center justify-center w-9 h-9 rounded-full bg-cyan-100 text-cyan-800 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400">
         {user?.initials || "UN"}
       </button>
@@ -87,8 +87,11 @@ const Header = ({
 
           {/* Auth Buttons */}
           {isAuthenticated ? (
-            <div className="hidden md:block">
+            <div className="hidden md:flex items-center gap-2">
               <UserAvatar />
+              <span className="text-base font-semibold text-white">
+                {user?.name || "User"}
+              </span>
             </div>
           ) : (
             <>
