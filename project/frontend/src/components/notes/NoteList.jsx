@@ -71,7 +71,6 @@ const NoteList = () => {
     }
   };
 
-  // ✅ FIXED: This is called by NoteForm after API call is made
   // It should ONLY update local state, NOT make API calls
   const handleSaveNote = async (savedNote) => {
     try {
@@ -119,84 +118,12 @@ const NoteList = () => {
     }
   };
 
-  // ✅ SEPARATE: Direct API operations (for when NOT using the form)
-  // const handleCreateNote = async (noteData) => {
-  //   try {
-  //     console.log('🔄 Creating note directly via API:', noteData);
-  //     const newNote = await notesAPI.createNote(noteData);
-  //     console.log('✅ Note created via API:', newNote);
-      
-  //     if (!isMountedRef.current) return;
-      
-  //     // Add to local state
-  //     setNotes(prevNotes => {
-  //       const noteExists = prevNotes.some(note => 
-  //         note.id === newNote.id || note._id === newNote._id
-  //       );
-        
-  //       if (noteExists) {
-  //         console.log('🛑 Direct API note already exists');
-  //         return prevNotes;
-  //       }
-        
-  //       return [newNote, ...prevNotes];
-  //     });
-      
-  //     return newNote;
-  //   } catch (err) {
-  //     console.error('❌ Failed to create note via API:', err);
-      
-  //     if (!isMountedRef.current) return;
-      
-  //     if (err.message.includes('Authentication') || err.message.includes('log in again')) {
-  //       setError('Your session has expired. Please log in again.');
-  //       logout();
-  //     } else {
-  //       setError(err.message || 'Failed to create note');
-  //     }
-  //     throw err;
-  //   }
-  // };
 
   const handleEditNote = (note) => {
     console.log('📝 Opening edit form for note:', note.id || note._id);
     setEditingNote(note);
     setShowForm(true);
   };
-
-  // ✅ SEPARATE: Direct API update (for when NOT using the form)
-  // const handleUpdateNote = async (noteId, noteData) => {
-  //   try {
-  //     console.log('🔄 Updating note directly via API:', noteId, noteData);
-  //     const updatedNote = await notesAPI.updateNote(noteId, noteData);
-  //     console.log('✅ Note updated via API:', updatedNote);
-      
-  //     if (!isMountedRef.current) return;
-      
-  //     // Update in local state
-  //     setNotes(prevNotes => 
-  //       prevNotes.map(note => 
-  //         (note.id === noteId || note._id === noteId) 
-  //           ? updatedNote 
-  //           : note
-  //       )
-  //     );
-      
-  //     return updatedNote;
-  //   } catch (err) {
-  //     console.error('❌ Failed to update note via API:', err);
-      
-  //     if (!isMountedRef.current) return;
-      
-  //     if (err.message.includes('Authentication') || err.message.includes('log in again')) {
-  //       setError('Your session has expired. Please log in again.');
-  //       logout();
-  //     } else {
-  //       setError(err.message || 'Failed to update note');
-  //     }
-  //     throw err;
-  //   }
-  // };
 
   // Handle deleting a note with better error handling
   const handleDeleteNote = async (noteId) => {

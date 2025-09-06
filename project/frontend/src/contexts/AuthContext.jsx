@@ -1,6 +1,3 @@
-// Complete Fixed Authentication Context Provider
-// Properly verifies tokens with your backend
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { authAPI } from '../services/api';
 
