@@ -3,10 +3,11 @@ export function formatNote(note) {
     id: note.id,
     title: note.title,
     content: note.content,
-    author: note.author || "Anonymous",
+    author: note.user ? note.user.name : "Anonymous",  
     isPublic: note.isPublic ?? false,
     createdAt: note.createdAt.toISOString(),
     updatedAt: note.updatedAt.toISOString(),
+    user: note.user ? { id: note.user.id, name: note.user.name } : null,
   };
 }
 

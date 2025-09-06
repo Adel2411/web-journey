@@ -5,7 +5,7 @@ import { httpError } from "../utils/errorHandler.js";
 // GET /api/notes with search, sort, pagination
 export async function getNotes(req, res, next) {
   try {
-    const { search = "", sort = "newest", page = 1, limit = 3 } = req.query;
+    const { search = "", sort = "newest", page = 1, limit = 1000 } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     const orderBy =
@@ -29,6 +29,7 @@ export async function getNotes(req, res, next) {
       orderBy,
       skip,
       take: parseInt(limit),
+      include: { user: { select: { id: true, name: true } } },
     });
 
     res.json(formatNotes(notes));
@@ -41,7 +42,7 @@ export async function getNotes(req, res, next) {
 export async function getNoteById(req, res, next) {
   try {
     const { id } = req.params;
-    const note = await prisma.note.findUnique({ where: { id: Number(id) } });
+    const note = await prisma.note.findUnique({ where: { id: Number(id) }, include: { user: { select: { id: true, name: true } } } });
 
     if (!note) throw httpError("Note not found", 404, "NOT_FOUND");
 
@@ -69,6 +70,7 @@ export async function createNote(req, res, next) {
         isPublic,
         userId: req.user.id,
       },
+      include: { user: { select: { id: true, name: true } } },
     });
 
     res.status(201).json(formatNote(note));
@@ -93,6 +95,7 @@ export async function updateNote(req, res, next) {
     const note = await prisma.note.update({
       where: { id: Number(id) },
       data: req.body,
+      include: { user: { select: { id: true, name: true } } },
     });
 
     res.json(formatNote(note));

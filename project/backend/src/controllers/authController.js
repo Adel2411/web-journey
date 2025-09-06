@@ -10,22 +10,37 @@ export const register = async (req, res) => {
 
     // 1. Basic validation
     if (!email || !password || !confirmPassword || !name || !age) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ 
+        success: false,
+        message: "All fields are required" 
+      });
     }
     if (password !== confirmPassword) {
-      return res.status(400).json({ message: "Passwords do not match" });
+      return res.status(400).json({ 
+        success: false,
+        message: "Passwords do not match" 
+      });
     }
     if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters" });
+      return res.status(400).json({ 
+        success: false,
+        message: "Password must be at least 6 characters" 
+      });
     }
     if (age < 18) {
-      return res.status(400).json({ message: "You must be 18 or older" });
+      return res.status(400).json({ 
+        success: false,
+        message: "You must be 18 or older" 
+      });
     }
 
     // 2. Check if email already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ message: "Email already in use" });
+      return res.status(400).json({ 
+        success: false,
+        message: "Email already in use" 
+      });
     }
 
     // 3. Hash password
@@ -39,14 +54,19 @@ export const register = async (req, res) => {
     // 5. Generate JWT
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    // 6. Return response
+    // 6. Return response with success property
     const { password: _, ...userData } = user;
     res.status(201).json({
+      success: true,
       message: "User registered successfully",
       data: { user: userData, token },
     });
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(500).json({ 
+      success: false,
+      message: "Server error", 
+      error: err.message 
+    });
   }
 };
 
@@ -57,25 +77,88 @@ export const login = async (req, res) => {
     // 1. Check if user exists
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({ 
+        success: false,
+        message: "Invalid email or password" 
+      });
     }
 
     // 2. Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid email or password" });
+      return res.status(400).json({ 
+        success: false,
+        message: "Invalid email or password" 
+      });
     }
 
     // 3. Generate JWT
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-
-    // 4. Return response
+    
+    // 4. Return response with success property
     const { password: _, ...userData } = user;
     res.status(200).json({
+      success: true,
       message: "Login successful",
       data: { user: userData, token },
     });
   } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
+    res.status(500).json({ 
+      success: false,
+      message: "Server error", 
+      error: err.message 
+    });
+  }
+};
+
+export const verifyToken = async (req, res) => {
+  try {
+    // Get the full user data from database
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        age: true,
+        createdAt: true,
+        // Don't include password
+      }
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Token is valid",
+      data: { user }
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: err.message
+    });
+  }
+};
+
+export const logout = async (req, res) => {
+  try {
+    res.status(200).json({
+      success: true,
+      message: "Logged out successfully"
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: err.message
+    });
   }
 };
