@@ -1,11 +1,19 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import App from "./App.jsx";
-import "./App.css";
 
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import './App.css';  // or whatever your CSS file is named
+import { AuthProvider } from "./contexts/AuthContext";
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
+// ReactDOM.createRoot(document.getElementById("root")).render(
+//   <React.StrictMode>
+//     <AuthProvider>
+//       <App />
+//     </AuthProvider>
+//   </React.StrictMode>
+// );
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <AuthProvider>
     <App />
-  </StrictMode>,
+  </AuthProvider>
 );
