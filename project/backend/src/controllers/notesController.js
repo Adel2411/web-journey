@@ -12,14 +12,15 @@ export const getNotes = async (req, res, next) => {
 
     /* ---------- search filter ---------- */
     const search = req.query.search || "";
-    const where = search
-      ? {
-          OR: [
-            { title: { contains: search, mode: "insensitive" } },
-            { content: { contains: search, mode: "insensitive" } },
-          ],
-        }
-      : {};
+    const where = {
+      userId: req.user.userId,
+      ...(search && {
+        OR: [
+          { title: { contains: search, mode: "insensitive" } },
+          { content: { contains: search, mode: "insensitive" } },
+        ],
+      }),
+    };
 
     /* ---------- sorting ---------- */
     let orderBy;
@@ -63,17 +64,23 @@ export const getNotes = async (req, res, next) => {
 };
 
 export const createNote = async (req, res, next) => {
-  const { title, content, authorName = "Unknown", isPublic = true } = req.body;
+  const { title, content, isPublic = true } = req.body;
+  const user = await prisma.user.findUnique({
+            where: { id: req.user.userId }
+ });
+
+  const authorName = user.name;
   try {
     const created = await prisma.note.create({
       data: {
         title: title.trim(),
         content: content.trim(),
-        authorName,
+        authorName: user.name, 
         isPublic,
+        userId: req.user.userId,
       },
     });
-    res.status(201).json(formatNote(created));
+    res.status(201).json(created);
   } catch (err) {
     next(err);
   }
@@ -85,6 +92,10 @@ export const getNoteById = async (req, res, next) => {
       where: { id: Number(req.params.id) },
     });
     if (!note) return next(httpError("Note not found", 404, "NOT_FOUND"));
+    if (note.userId !== req.user.userId) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
     res.status(200).json(formatNote(note));
   } catch (err) {
     next(err);
@@ -93,19 +104,24 @@ export const getNoteById = async (req, res, next) => {
 
 export const updateNote = async (req, res, next) => {
   const noteId = Number(req.params.id);
-  const { title, content, authorName, isPublic } = req.body;
+  const { title, content, isPublic } = req.body;
 
   const data = {};
   if (title !== undefined) data.title = title;
   if (content !== undefined) data.content = content;
-  if (authorName !== undefined) data.authorName = authorName;
   if (isPublic !== undefined) data.isPublic = isPublic;
 
   try {
     const existing = await prisma.note.findUnique({ where: { id: noteId } });
     if (!existing) return next(httpError("Note not found", 404, "NOT_FOUND"));
+    if (existing.userId !== req.user.userId) {
+      return res.status(403).json({ message: "Access denied" });
+    }
 
-    const updated = await prisma.note.update({ where: { id: noteId }, data });
+    const updated = await prisma.note.update({
+            where: { id: parseInt(req.params.id) },
+            data
+        });
     res.status(200).json(formatNote(updated));
   } catch (err) {
     next(err);
@@ -117,6 +133,9 @@ export const deleteNote = async (req, res, next) => {
   try {
     const existing = await prisma.note.findUnique({ where: { id: noteId } });
     if (!existing) return next(httpError("Note not found", 404, "NOT_FOUND"));
+    if (existing.userId !== req.user.userId) {
+      return res.status(403).json({ message: "Access denied" });
+    }
     await prisma.note.delete({ where: { id: noteId } });
     res.status(204).send();
   } catch (err) {

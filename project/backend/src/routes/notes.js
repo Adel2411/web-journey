@@ -13,12 +13,14 @@ import {
   validateNoteId,
 } from "../middleware/validator.js";
 
+import { authenticate } from "../middleware/authenticate.js";
+
 const router = express.Router();
 
-router.get("/", getNotes);
-router.get("/:id", validateNoteId, getNoteById);
-router.post("/", createNoteValidator, createNote);
-router.put("/:id", validateNoteId, updateNoteValidator, updateNote);
-router.delete("/:id", validateNoteId, deleteNote);
+router.get("/", authenticate, getNotes);
+router.get("/:id", authenticate, validateNoteId, getNoteById);
+router.post("/", authenticate, createNoteValidator, createNote);
+router.put("/:id", authenticate, validateNoteId, updateNoteValidator, updateNote);
+router.delete("/:id", authenticate, validateNoteId, deleteNote);
 
 export default router;
