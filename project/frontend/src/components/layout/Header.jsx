@@ -1,5 +1,4 @@
-// Header.jsx
-import { useState } from "react";
+import { useState, useContext } from "react";
 
 const Header = ({
   isAuthenticated,
@@ -11,10 +10,11 @@ const Header = ({
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const UserAvatar = () => (
-    <div className="relative hidden md:group">
+    <div className="relative group">
       <button className="flex items-center justify-center w-9 h-9 rounded-full bg-cyan-100 text-cyan-800 font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-cyan-400">
-        {user?.initials || "UN"}
+        {user?.initials || "Uk"}
       </button>
+
       <div className="absolute right-0 mt-2 w-48 bg-[#2a2a3a] rounded-md shadow-lg py-1 z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out origin-top-right">
         <a
           href="/profile"
@@ -87,8 +87,11 @@ const Header = ({
 
           {/* Auth Buttons */}
           {isAuthenticated ? (
-            <div className="hidden md:block">
+            <div className="hidden md:flex items-center gap-2">
               <UserAvatar />
+              <span className="text-base font-semibold text-white">
+                {user?.name || "User"}
+              </span>
             </div>
           ) : (
             <>
