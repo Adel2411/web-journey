@@ -2,6 +2,8 @@ import { prisma } from "../utils/prisma.js";
 import { formatNote, formatNotes } from "../utils/noteFormatter.js";
 import { httpError } from "../utils/errorHandler.js";
 
+const isAdminRoute = (req) => req.path.startsWith('/admin');
+
 // GET /api/notes  ── list notes with search, sorting, and pagination
 export const getNotes = async (req, res, next) => {
   try {
@@ -40,11 +42,55 @@ export const getNotes = async (req, res, next) => {
     }
 
     /* ---------- fetch paginated results + total count ---------- */
-    const [notes, total] = await prisma.$transaction([
-      prisma.note.findMany({ where, orderBy, skip, take: limit }),
-      prisma.note.count({ where }),
-    ]);
 
+    let notes;
+    let total;
+
+    if( isAdminRoute(req) && req.user.role === "ADMIN" ) {
+      notes = await prisma.note.findMany({
+        take :limit,
+        skip,
+        orderBy,
+        where,
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
+        }
+      })
+
+      total = await prisma.note.count({ where })
+
+    } else {
+
+      notes = await prisma.note.findMany({
+        take: limit,
+        skip,
+        orderBy,
+        where: {
+          ...where,
+          userId: req.user.id, // only this user's notes
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
+        }
+      });
+
+      total = await prisma.note.count({
+        where: { userId: req.user.id },
+      })
+    }
+    
     const formatted = formatNotes(notes);
 
     /* ---------- respond ---------- */
@@ -63,17 +109,31 @@ export const getNotes = async (req, res, next) => {
 };
 
 export const createNote = async (req, res, next) => {
-  const { title, content, authorName = "Unknown", isPublic = true } = req.body;
+  const { title, content, isPublic = true } = req.body;
+
   try {
     const created = await prisma.note.create({
-      data: {
-        title: title.trim(),
-        content: content.trim(),
-        authorName,
-        isPublic,
-      },
+    data: {
+      title: title.trim(),
+      content: content.trim(),
+      isPublic,
+      user: {
+        connect: { id: req.user.id } 
+      }
+    },
+    include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        }
+      }
     });
+    
     res.status(201).json(formatNote(created));
+
   } catch (err) {
     next(err);
   }
@@ -81,10 +141,26 @@ export const createNote = async (req, res, next) => {
 
 export const getNoteById = async (req, res, next) => {
   try {
+
     const note = await prisma.note.findUnique({
       where: { id: Number(req.params.id) },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        }
+      }
     });
+
     if (!note) return next(httpError("Note not found", 404, "NOT_FOUND"));
+
+    if( req.user.role === "USER" || !isAdminRoute(req) ) {
+      if(note.userId !== req.user.id) return next(httpError("You are not authorized to access this note", 404, "NOT_FOUND"))
+    }
+
     res.status(200).json(formatNote(note));
   } catch (err) {
     next(err);
@@ -93,19 +169,33 @@ export const getNoteById = async (req, res, next) => {
 
 export const updateNote = async (req, res, next) => {
   const noteId = Number(req.params.id);
-  const { title, content, authorName, isPublic } = req.body;
+  const { title, content , isPublic } = req.body;
 
   const data = {};
   if (title !== undefined) data.title = title;
   if (content !== undefined) data.content = content;
-  if (authorName !== undefined) data.authorName = authorName;
   if (isPublic !== undefined) data.isPublic = isPublic;
 
   try {
     const existing = await prisma.note.findUnique({ where: { id: noteId } });
     if (!existing) return next(httpError("Note not found", 404, "NOT_FOUND"));
-
-    const updated = await prisma.note.update({ where: { id: noteId }, data });
+    
+    if( req.user.role === "USER"  || !isAdminRoute(req) ) {
+      if( existing.userId !== req.user.id) return next(httpError("You are not authorized to update this note", 404, "NOT_FOUND"));
+    }
+    const updated = await prisma.note.update({
+      where: { id: noteId }, 
+      data,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        }
+      }
+    });
     res.status(200).json(formatNote(updated));
   } catch (err) {
     next(err);
@@ -115,8 +205,16 @@ export const updateNote = async (req, res, next) => {
 export const deleteNote = async (req, res, next) => {
   const noteId = Number(req.params.id);
   try {
-    const existing = await prisma.note.findUnique({ where: { id: noteId } });
+    const existing = await prisma.note.findUnique({ 
+      where: { id: noteId }
+    });
+
     if (!existing) return next(httpError("Note not found", 404, "NOT_FOUND"));
+    
+    if( req.user.role === "USER"  || !isAdminRoute(req) ) {
+      if(existing.userId !== req.user.id) return next(httpError("You are not authorized to delete this note", 404, "FORBIDDEN"));
+    }
+
     await prisma.note.delete({ where: { id: noteId } });
     res.status(204).send();
   } catch (err) {
