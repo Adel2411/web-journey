@@ -1,4 +1,6 @@
-export const BASE_URL = "http://localhost:5000/api";
+// Use environment variable or fallback to localhost
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+export const BASE_URL = `${API_BASE}/api`;
 
 export const authFetch = async (url, options = {}, token) => {
     try {

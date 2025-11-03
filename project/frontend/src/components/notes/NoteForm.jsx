@@ -26,13 +26,13 @@ export const NoteForm = ({
                 onClick={onCancel}
             >
                 <div 
-                className="bg-gradient-to-br from-[#1a1a2e] to-[#16213e] border border-[#2c2c3e]/50 rounded-xl shadow-2xl max-w-md w-full mx-4 max-h-[85vh] overflow-hidden backdrop-blur-lg transform transition-all duration-200"
+                className="bg-linear-to-br from-[#1a1a2e] to-[#16213e] border border-[#2c2c3e]/50 rounded-xl shadow-2xl max-w-md w-full mx-4 max-h-[85vh] overflow-hidden backdrop-blur-lg transform transition-all duration-200"
                 onClick={(e) => e.stopPropagation()}
                 >
                 {/* Modal Header */}
-                <div className="flex justify-between items-center p-6 border-b border-[#2c2c3e]/50 bg-gradient-to-r from-[#1e1e3f] to-[#1a1a2e]">
+                <div className="flex justify-between items-center p-6 border-b border-[#2c2c3e]/50 bg-linear-to-r from-[#1e1e3f] to-[#1a1a2e]">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                    <div className="w-6 h-6 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-lg flex items-center justify-center">
+                    <div className="w-6 h-6 bg-linear-to-br from-cyan-400 to-blue-500 rounded-lg flex items-center justify-center">
                         <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                         </svg>

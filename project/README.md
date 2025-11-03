@@ -66,7 +66,7 @@ docker compose up --build -d
 **That's it! 🎉** Your application will be available at:
 
 - **Frontend (React)**: http://localhost:5173
-- **Backend API**: http://localhost:5000
+- **Backend API**: http://localhost:8000
 - **Database**: PostgreSQL running on port 5434
 
 ### 📋 What Docker Setup Provides
@@ -154,7 +154,7 @@ npm run dev
    docker compose up --build -d
    ```
    - Frontend: http://localhost:5173
-   - Backend API: http://localhost:5000
+   - Backend API: http://localhost:8000
 
 2. **📚 Start with Sessions**
    - Choose your track (Frontend/Backend or both)
@@ -249,7 +249,7 @@ By building CollabNote, you'll gain hands-on experience with:
 
 **Common Docker Issues:**
 
-- **Port conflicts**: Change ports in `docker-compose.yml` if 5173 or 5000 are in use
+- **Port conflicts**: Change ports in `docker-compose.yml` if 5173 or 8000 are in use
 - **Database connection**: Run `docker compose logs postgres` to check database startup
 - **Service not starting**: Run `docker compose logs [service-name]` to see error details
 - **Reset everything**: Run `docker compose down -v` then `docker compose up --build -d`

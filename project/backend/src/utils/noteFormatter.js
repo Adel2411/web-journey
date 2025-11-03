@@ -8,6 +8,12 @@ export const formatNote = (note) => {
     isPublic: note.isPublic,
     createdAt: note.createdAt?.toISOString(),
     updatedAt: note.updatedAt?.toISOString(),
+    user: note.user ? {
+      id: note.user.id,
+      name: note.user.name,
+      email: note.user.email
+    } : undefined,
+    userId: note.userId
   };
 };
 

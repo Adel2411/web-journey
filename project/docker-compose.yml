@@ -26,12 +26,14 @@ services:
     volumes:
       - ./backend:/app
       - /app/node_modules
+      - /app/src/generated
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgresql://username:password@postgres:5432/collabnote_db
-      - PORT=5000
+      - PORT=8000
+      - JWT_SECRET=your-super-secret-jwt-key-change-in-production-123456789
     ports:
-      - "5000:5000"
+      - "8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -47,7 +49,7 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:5000
+      - VITE_API_URL=http://localhost:8000
     ports:
       - "5173:5173"
     depends_on:

@@ -25,11 +25,10 @@ export const AuthProvider = ({ children }) => {
           const decoded = decodeJWT(token);
           if (decoded) {
             const userInfo = {
-              id: decoded.id || decoded.userId || decoded.sub,
-              name: decoded.name || decoded.username || `${decoded.firstName} ${decoded.lastName}` || "User",
-              email: decoded.email,
+              id: decoded.userId,
+              name: decoded.name || "User",
               role: decoded.role,
-              initials: (decoded.name || decoded.username || "UN")
+              initials: (decoded.name || "UN")
                 .split(" ")
                 .map(n => n[0])
                 .join("")

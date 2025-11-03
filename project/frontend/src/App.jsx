@@ -90,7 +90,7 @@ const App = () => {
         <main className="max-w-6xl w-full mx-auto px-4 sm:px-6 md:px-8 py-8">
           {/* Conditional welcome message with fade animation */}
           {showWelcome && (
-            <div className="mb-6 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-xl p-4 transition-all duration-500 ease-in-out">
+            <div className="mb-6 bg-linear-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-xl p-4 transition-all duration-500 ease-in-out">
               <h1 className="text-2xl font-bold text-white mb-1">Welcome back, {user?.name}!</h1>
               <p className="text-gray-300">Manage your notes and collaborate with others.</p>
             </div>

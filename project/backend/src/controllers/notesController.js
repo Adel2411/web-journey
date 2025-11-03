@@ -132,7 +132,7 @@ export const createNote = async (req, res, next) => {
       }
     });
     
-    res.status(201).json(formatNote(created));
+    res.status(201).json({ note: formatNote(created) });
 
   } catch (err) {
     next(err);
@@ -161,7 +161,7 @@ export const getNoteById = async (req, res, next) => {
       if(note.userId !== req.user.id) return next(httpError("You are not authorized to access this note", 404, "NOT_FOUND"))
     }
 
-    res.status(200).json(formatNote(note));
+    res.status(200).json({ note: formatNote(note) });
   } catch (err) {
     next(err);
   }
@@ -196,7 +196,7 @@ export const updateNote = async (req, res, next) => {
         }
       }
     });
-    res.status(200).json(formatNote(updated));
+    res.status(200).json({ note: formatNote(updated) });
   } catch (err) {
     next(err);
   }
